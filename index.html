@@ -4,10 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Presenze Volontari</title>
+  <title>Moby Dick ETS — Presenze</title>
+  <meta name="description" content="Sistema di gestione presenze volontari Moby Dick ETS" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet" />
   <style>
     *,
     *::before,
@@ -33,9 +36,8 @@
     body {
       background: var(--bg-light);
       color: var(--text-primary);
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -48,44 +50,54 @@
       gap: 20px;
     }
 
-    /* HEADER */
-    header {
+    /* ── HEADER ── */
+    .admin-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding-top: 8px;
     }
 
-    .logo-group {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    .header-logo {
+      height: 52px;
+      object-fit: contain;
     }
 
-    .logo-tag {
-      font-size: 0.7rem;
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-clock {
+      text-align: right;
+    }
+
+    .header-time {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .header-date {
+      font-size: 0.65rem;
       font-weight: 600;
       color: var(--text-secondary);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-    }
-
-    h1 {
-      font-weight: 700;
-      font-size: clamp(1.6rem, 7vw, 2.4rem);
-      color: var(--text-primary);
-      letter-spacing: -0.02em;
-      line-height: 1.1;
       margin-top: 2px;
     }
 
     .status-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: var(--moby-green);
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
       animation: pulse-green 2.5s ease-in-out infinite;
+      flex-shrink: 0;
     }
 
     @keyframes pulse-green {
@@ -96,69 +108,77 @@
       }
 
       50% {
-        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.08);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.06);
       }
     }
 
-    /* TIME */
-    .time-display {
-      text-align: center;
-      padding: 20px;
+    /* ── ADMIN CARD (base) ── */
+    .admin-card {
       background: var(--surface);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-card);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
     }
 
-    .time {
-      font-size: 42px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-
-    .date {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-top: 6px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    /* STATS ROW */
-    .stats-row {
+    /* ── STATS GRID ── */
+    .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
     .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius-card);
-      padding: 18px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      padding: 20px;
     }
 
-    .stat-num {
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .stat-icon {
+      font-size: 22px;
+    }
+
+    .stat-icon.green {
+      color: var(--moby-green);
+    }
+
+    .stat-icon.blue {
+      color: var(--moby-blue);
+    }
+
+    .stat-badge {
+      font-size: 0.7rem;
       font-weight: 700;
-      font-size: clamp(2rem, 8vw, 2.4rem);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .stat-badge.green {
+      background: #ecfdf5;
+      color: var(--moby-green);
+    }
+
+    .stat-badge.neutral {
+      background: #f1f5f9;
+      color: var(--text-secondary);
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
       line-height: 1;
       color: var(--text-primary);
     }
 
-    .stat-card.entrate .stat-num {
-      color: var(--moby-green);
-    }
-
-    .stat-card.uscite .stat-num {
-      color: var(--moby-blue);
-    }
-
     .stat-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: var(--text-secondary);
       margin-top: 6px;
@@ -166,12 +186,182 @@
       text-transform: uppercase;
     }
 
-    /* SCANNER */
-    .scanner-card {
+    /* ── FEEDBACK ── */
+    .feedback {
+      padding: 16px 20px;
+      border-radius: var(--radius-card);
+      font-weight: 600;
+      font-size: 14px;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
+    }
+
+    .feedback.show {
+      display: flex;
+    }
+
+    .feedback.success {
+      background: #f0fdf4;
+      border: 1.5px solid rgba(16, 185, 129, 0.3);
+      color: #15803d;
+    }
+
+    .feedback.error {
+      background: #fef2f2;
+      border: 1.5px solid rgba(239, 68, 68, 0.3);
+      color: #b91c1c;
+    }
+
+    .feedback.loading {
+      background: #eff6ff;
+      border: 1.5px solid rgba(59, 127, 158, 0.3);
+      color: var(--moby-blue);
+    }
+
+    .feedback-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .feedback-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .feedback-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .feedback-sub {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* ── ACTIONS GRID ── */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 28px 16px;
+      border-radius: var(--radius-card);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .primary-action {
+      background: var(--moby-blue);
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(59, 127, 158, 0.3);
+    }
+
+    .primary-action:hover {
+      background: #316e8a;
+      box-shadow: 0 12px 32px rgba(59, 127, 158, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .primary-action.scanning {
+      background: #e85d4a;
+      box-shadow: 0 8px 24px rgba(232, 93, 74, 0.35);
+    }
+
+    .primary-action.scanning:hover {
+      background: #d44535;
+    }
+
+    .action-icon-wrap {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-icon-wrap .material-symbols-outlined {
+      font-size: 28px;
+    }
+
+    .secondary-action {
       background: var(--surface);
       border: 1px solid var(--border-light);
-      border-radius: var(--radius-card);
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      color: var(--text-primary);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .secondary-action:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .secondary-action .action-icon-wrap {
+      background: #e0f2fe;
+      color: var(--moby-blue);
+    }
+
+    .action-text {
+      text-align: center;
+    }
+
+    .action-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 2px;
+    }
+
+    .action-sub {
+      font-size: 0.72rem;
+      color: inherit;
+      opacity: 0.72;
+    }
+
+    /* ── SCANNER CARD ── */
+    .scanner-wrap {
+      display: none;
+    }
+
+    .scanner-wrap.visible {
+      display: block;
+    }
+
+    .scanner-card {
       overflow: hidden;
     }
 
@@ -227,7 +417,6 @@
       display: none;
     }
 
-    /* Scanner overlay */
     .scan-overlay {
       position: absolute;
       inset: 0;
@@ -251,7 +440,7 @@
       position: absolute;
       width: 28px;
       height: 28px;
-      border-color: #ffffff;
+      border-color: #fff;
       border-style: solid;
       opacity: 0.85;
     }
@@ -311,7 +500,7 @@
       }
     }
 
-    /* TIPO SWITCH */
+    /* Tipo switch */
     .tipo-switch {
       display: flex;
       gap: 10px;
@@ -325,12 +514,12 @@
       background: var(--bg-light);
       border: 1.5px solid var(--border-light);
       color: var(--text-secondary);
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
-      letter-spacing: 0.03em;
       cursor: pointer;
       transition: all 0.2s ease;
       border-radius: var(--radius-btn);
+      font-family: inherit;
     }
 
     .tipo-btn:hover {
@@ -350,160 +539,101 @@
       background: #fef2f2;
     }
 
-    /* FEEDBACK */
-    .feedback {
-      padding: 16px 20px;
-      border-radius: var(--radius-card);
-      font-weight: 600;
-      font-size: 14px;
-      display: none;
-      align-items: center;
-      gap: 12px;
-      animation: slideIn 0.3s ease;
-    }
-
-    .feedback.show {
-      display: flex;
-    }
-
-    .feedback.success {
-      background: #f0fdf4;
-      border: 1.5px solid rgba(16, 185, 129, 0.3);
-      color: #15803d;
-    }
-
-    .feedback.error {
-      background: #fef2f2;
-      border: 1.5px solid rgba(239, 68, 68, 0.3);
-      color: #b91c1c;
-    }
-
-    .feedback.loading {
-      background: #eff6ff;
-      border: 1.5px solid rgba(59, 127, 158, 0.3);
-      color: var(--moby-blue);
-    }
-
-    .feedback-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
-    .feedback-text {
+    /* ── ACTIVITY LOG ── */
+    .activity-section {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 12px;
     }
 
-    .feedback-name {
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .feedback-sub {
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateY(12px);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    /* LOG */
-    .log-section {
-      margin-top: 4px;
-    }
-
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    .section-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
     }
 
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border-light);
-    }
-
-    .log-list {
+    .activity-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .log-item {
+    .activity-item {
+      padding: 14px 18px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border-light);
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-      animation: slideIn 0.3s ease;
+      gap: 14px;
     }
 
-    .log-info {
-      display: contents;
-    }
-
-    .log-nome {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      flex: 1;
-    }
-
-    .log-meta {
-      font-size: 0.72rem;
-      color: var(--text-secondary);
+    .activity-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
-      min-width: 52px;
     }
 
-    .log-tipo {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-
-    .log-tipo.entrata {
+    .activity-icon.entrata {
       background: #dcfce7;
-      color: #15803d;
+      color: var(--moby-green);
     }
 
-    .log-tipo.uscita {
+    .activity-icon.uscita {
       background: #e0f2fe;
       color: var(--moby-blue);
     }
 
-    .log-empty {
-      text-align: center;
-      padding: 32px;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
+    .activity-icon .material-symbols-outlined {
+      font-size: 18px;
     }
 
-    /* SCROLLBAR */
+    .activity-details {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .activity-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .activity-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .activity-time {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .log-empty {
+      text-align: center;
+      padding: 28px;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+    }
+
+    /* ── FOOTER ── */
+    .admin-footer {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .admin-footer p {
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    /* ── SCROLLBAR ── */
     ::-webkit-scrollbar {
       width: 4px;
     }
@@ -519,228 +649,324 @@
   </style>
 </head>
 
+<body>
+  <main>
+    <!-- HEADER -->
+    <header class="admin-header">
+      <img src="logo/logo_mobydickets-1-3.png" alt="Moby Dick ETS" class="header-logo" />
+      <div class="header-right">
+        <div class="header-clock">
+          <div class="header-time" id="clock">00:00</div>
+          <div class="header-date" id="dateLabel">—</div>
+        </div>
+        <div class="status-dot" id="statusDot"></div>
+      </div>
+    </header>
 
-<main>
-  <header>
-    <div class="logo-group">
-      <img src="logo/logo_mobydickets-1-3.png" alt="Moby Dick ETS"
-        style="height: 60px; object-fit: contain; margin-bottom: 8px;">
-      <span class="logo-tag">Servizio Civile</span>
-      <h1>Presenze</h1>
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="admin-card stat-card">
+        <div class="stat-top">
+          <span class="material-symbols-outlined stat-icon green">login</span>
+          <span class="stat-badge green" id="badgeEntrate">0</span>
+        </div>
+        <div class="stat-number" id="statEntrate">0</div>
+        <div class="stat-label">Entrate oggi</div>
+      </div>
+      <div class="admin-card stat-card">
+        <div class="stat-top">
+          <span class="material-symbols-outlined stat-icon blue">logout</span>
+          <span class="stat-badge neutral">ORA</span>
+        </div>
+        <div class="stat-number" id="statUscite">0</div>
+        <div class="stat-label">Uscite oggi</div>
+      </div>
     </div>
-    <div class="status-dot" id="statusDot"></div>
-  </header>
 
-  <div class="time-display">
-    <div class="time" id="clock">00:00:00</div>
-    <div class="date" id="dateLabel">—</div>
-  </div>
+    <!-- FEEDBACK -->
+    <div class="feedback" id="feedback">
+      <div class="feedback-icon" id="feedbackIcon">✓</div>
+      <div class="feedback-text">
+        <div class="feedback-name" id="feedbackName">—</div>
+        <div class="feedback-sub" id="feedbackSub">—</div>
+      </div>
+    </div>
 
-  <div class="stats-row">
-    <div class="stat-card entrate">
-      <div class="stat-num" id="statEntrate">0</div>
-      <div class="stat-label">Entrate oggi</div>
+    <!-- QUICK ACTIONS -->
+    <div>
+      <div class="section-title">Azioni Rapide</div>
+      <div class="actions-grid">
+        <button class="action-btn primary-action" id="btnScanner" onclick="toggleScanner()">
+          <div class="action-icon-wrap">
+            <span class="material-symbols-outlined" id="scannerBtnIcon">qr_code_scanner</span>
+          </div>
+          <div class="action-text">
+            <div class="action-title" id="scannerBtnLabel">Avvia</div>
+            <div class="action-sub">Scansione QR</div>
+          </div>
+        </button>
+        <button class="action-btn secondary-action" onclick="exportCSV()">
+          <div class="action-icon-wrap">
+            <span class="material-symbols-outlined">download</span>
+          </div>
+          <div class="action-text">
+            <div class="action-title">Esporta</div>
+            <div class="action-sub">Report CSV</div>
+          </div>
+        </button>
+      </div>
     </div>
-    <div class="stat-card uscite">
-      <div class="stat-num" id="statUscite">0</div>
-      <div class="stat-label">Uscite oggi</div>
-    </div>
-  </div>
 
-  <div class="scanner-card">
-    <div class="scanner-header">
-      <span class="scanner-title">Scanner QR</span>
-      <span class="scan-indicator" id="scanIndicator">IN ATTESA</span>
-    </div>
-    <div class="video-wrap">
-      <video id="video" autoplay muted playsinline></video>
-      <canvas id="canvas"></canvas>
-      <div class="scan-overlay">
-        <div class="scan-frame">
-          <span></span>
-          <div class="scan-line"></div>
+    <!-- SCANNER (nascosto di default) -->
+    <div class="scanner-wrap" id="scannerWrap">
+      <div class="admin-card scanner-card">
+        <div class="scanner-header">
+          <span class="scanner-title">Scanner QR</span>
+          <span class="scan-indicator" id="scanIndicator">IN ATTESA</span>
+        </div>
+        <div class="video-wrap">
+          <video id="video" autoplay muted playsinline></video>
+          <canvas id="canvas"></canvas>
+          <div class="scan-overlay">
+            <div class="scan-frame">
+              <span></span>
+              <div class="scan-line"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tipo-switch">
+          <button class="tipo-btn active-entrata" id="btnEntrata" onclick="setTipo('entrata')">⬆ Entrata</button>
+          <button class="tipo-btn" id="btnUscita" onclick="setTipo('uscita')">⬇ Uscita</button>
         </div>
       </div>
     </div>
-    <div class="tipo-switch">
-      <button class="tipo-btn active-entrata" id="btnEntrata" onclick="setTipo('entrata')">⬆️ Entrata</button>
-      <button class="tipo-btn" id="btnUscita" onclick="setTipo('uscita')">⬇️ Uscita</button>
+
+    <!-- ACTIVITY LOG -->
+    <div class="activity-section">
+      <div class="section-header">
+        <div class="section-title" style="margin-bottom:0">Attività Recente</div>
+      </div>
+      <div class="activity-list" id="logList">
+        <div class="log-empty">Nessuna scansione oggi</div>
+      </div>
     </div>
-  </div>
 
-  <div class="feedback" id="feedback">
-    <div class="feedback-icon" id="feedbackIcon">✓</div>
-    <div class="feedback-text">
-      <div class="feedback-name" id="feedbackName">—</div>
-      <div class="feedback-sub" id="feedbackSub">—</div>
-    </div>
-  </div>
+    <!-- FOOTER -->
+    <footer class="admin-footer">
+      <p>Moby Dick ETS • Gestione Presenze</p>
+    </footer>
+  </main>
 
-  <div class="log-section">
-    <div class="section-label">Log di oggi</div>
-    <div class="log-list" id="logList">
-      <div class="log-empty">Nessuna scansione ancora</div>
-    </div>
-  </div>
-</main>
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────────────────
+    const SUPABASE_URL = 'https://czsbkfbtjlrbugmggzpn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6c2JrZmJ0amxyYnVnbWdnenBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MTY4MzEsImV4cCI6MjA4ODE5MjgzMX0.bAl9rSpvN2eAGSUhyBYg4aKvgnwPwrLP8fDiUkQ1grM';
 
-<script>
-  // ─── CONFIG ────────────────────────────────────────────────────────────────
-  const SUPABASE_URL = 'https://czsbkfbtjlrbugmggzpn.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6c2JrZmJ0amxyYnVnbWdnenBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MTY4MzEsImV4cCI6MjA4ODE5MjgzMX0.bAl9rSpvN2eAGSUhyBYg4aKvgnwPwrLP8fDiUkQ1grM';
+    const { createClient } = supabase;
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ─── INIT ──────────────────────────────────────────────────────────────────
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+    let tipoCorrente = 'entrata';
+    let ultimoScan = null;
+    let cooldown = false;
+    let cameraStream = null;
+    let scannerActive = false;
+    const LOG_TODAY = [];
 
-  let tipoCorrente = 'entrata';
-  let ultimoScan = null;
-  let cooldown = false;
-  const LOG_TODAY = [];
+    // ── CLOCK ───────────────────────────────────────────────────────────────
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent =
+        now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('dateLabel').textContent =
+        now.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-  // ─── CLOCK ─────────────────────────────────────────────────────────────────
-  function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
-    document.getElementById('dateLabel').textContent = now.toLocaleDateString('it-IT', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-    });
-  }
-  setInterval(updateClock, 1000);
-  updateClock();
+    // ── TIPO ────────────────────────────────────────────────────────────────
+    function setTipo(tipo) {
+      tipoCorrente = tipo;
+      document.getElementById('btnEntrata').className = 'tipo-btn' + (tipo === 'entrata' ? ' active-entrata' : '');
+      document.getElementById('btnUscita').className = 'tipo-btn' + (tipo === 'uscita' ? ' active-uscita' : '');
+    }
 
-  // ─── TIPO ──────────────────────────────────────────────────────────────────
-  function setTipo(tipo) {
-    tipoCorrente = tipo;
-    document.getElementById('btnEntrata').className = 'tipo-btn' + (tipo === 'entrata' ? ' active-entrata' : '');
-    document.getElementById('btnUscita').className = 'tipo-btn' + (tipo === 'uscita' ? ' active-uscita' : '');
-  }
+    // ── FEEDBACK ────────────────────────────────────────────────────────────
+    function showFeedback(type, icon, name, sub) {
+      const el = document.getElementById('feedback');
+      el.className = 'feedback show ' + type;
+      document.getElementById('feedbackIcon').textContent = icon;
+      document.getElementById('feedbackName').textContent = name;
+      document.getElementById('feedbackSub').textContent = sub;
+      setTimeout(() => el.classList.remove('show'), 4500);
+    }
 
-  // ─── FEEDBACK ──────────────────────────────────────────────────────────────
-  function showFeedback(type, icon, name, sub) {
-    const el = document.getElementById('feedback');
-    el.className = 'feedback show ' + type;
-    document.getElementById('feedbackIcon').textContent = icon;
-    document.getElementById('feedbackName').textContent = name;
-    document.getElementById('feedbackSub').textContent = sub;
-    setTimeout(() => el.classList.remove('show'), 4000);
-  }
+    // ── STATS ───────────────────────────────────────────────────────────────
+    function updateStats() {
+      const entrate = LOG_TODAY.filter(l => l.tipo === 'entrata').length;
+      const uscite = LOG_TODAY.filter(l => l.tipo === 'uscita').length;
+      document.getElementById('statEntrate').textContent = entrate;
+      document.getElementById('statUscite').textContent = uscite;
+      document.getElementById('badgeEntrate').textContent = '+' + entrate;
+    }
 
-  // ─── STATS ─────────────────────────────────────────────────────────────────
-  function updateStats() {
-    const entrate = LOG_TODAY.filter(l => l.tipo === 'entrata').length;
-    const uscite = LOG_TODAY.filter(l => l.tipo === 'uscita').length;
-    document.getElementById('statEntrate').textContent = entrate;
-    document.getElementById('statUscite').textContent = uscite;
-  }
-
-  // ─── LOG ───────────────────────────────────────────────────────────────────
-  function addLogItem(nome, tipo, ts) {
-    LOG_TODAY.unshift({ nome, tipo, ts });
-    const list = document.getElementById('logList');
-    list.innerHTML = '';
-    LOG_TODAY.slice(0, 12).forEach(entry => {
-      const t = new Date(entry.ts).toLocaleTimeString('it-IT');
-      list.insertAdjacentHTML('beforeend', `
-        <div class="log-item">
-          <div class="log-badge ${entry.tipo}"></div>
-          <div class="log-info">
-            <div class="log-nome">${entry.nome}</div>
-            <div class="log-meta">${t}</div>
+    // ── LOG ─────────────────────────────────────────────────────────────────
+    function addLogItem(nome, tipo, ts) {
+      LOG_TODAY.unshift({ nome, tipo, ts });
+      const list = document.getElementById('logList');
+      list.innerHTML = '';
+      LOG_TODAY.slice(0, 15).forEach(entry => {
+        const t = new Date(entry.ts).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        const icon = entry.tipo === 'entrata' ? 'login' : 'logout';
+        const label = entry.tipo === 'entrata' ? 'Ingresso registrato' : 'Uscita registrata';
+        list.insertAdjacentHTML('beforeend', `
+        <div class="admin-card activity-item">
+          <div class="activity-icon ${entry.tipo}">
+            <span class="material-symbols-outlined">${icon}</span>
           </div>
-          <div class="log-tipo ${entry.tipo}">${entry.tipo}</div>
+          <div class="activity-details">
+            <div class="activity-title">${label}</div>
+            <div class="activity-sub">${entry.nome}</div>
+          </div>
+          <div class="activity-time">${t}</div>
         </div>
       `);
-    });
-    updateStats();
-  }
+      });
+      updateStats();
+    }
 
-  // ─── QR SCAN ───────────────────────────────────────────────────────────────
-  async function onQRDetected(code) {
-    if (cooldown || code === ultimoScan) return;
-    cooldown = true;
-    ultimoScan = code;
-
-    document.getElementById('scanIndicator').textContent = 'ELABORO...';
-    showFeedback('loading', '⟳', 'Elaborazione...', code);
-
-    try {
-      // Cerca volontario per codice_qr
-      const { data: vol, error: ve } = await db
-        .from('volontari')
-        .select('*')
-        .eq('codice_qr', code)
-        .single();
-
-      if (ve || !vol) {
-        showFeedback('error', '✗', 'QR non riconosciuto', code);
-        document.getElementById('scanIndicator').textContent = 'ERRORE';
+    // ── SCANNER TOGGLE ───────────────────────────────────────────────────────
+    function toggleScanner() {
+      if (!scannerActive) {
+        scannerActive = true;
+        document.getElementById('scannerWrap').classList.add('visible');
+        document.getElementById('btnScanner').classList.add('scanning');
+        document.getElementById('scannerBtnIcon').textContent = 'stop_circle';
+        document.getElementById('scannerBtnLabel').textContent = 'Ferma';
+        startCamera();
       } else {
-        const ts = new Date().toISOString();
-        const nome = `${vol.nome} ${vol.cognome}`;
-
-        await db.from('presenze').insert({
-          volontario_id: vol.id,
-          tipo: tipoCorrente,
-          timestamp: ts
-        });
-
-        const emoji = tipoCorrente === 'entrata' ? '✓' : '✗';
-        showFeedback('success', emoji, nome,
-          `${tipoCorrente.toUpperCase()} registrata · ${new Date(ts).toLocaleTimeString('it-IT')}`);
-
-        addLogItem(nome, tipoCorrente, ts);
-        document.getElementById('scanIndicator').textContent = 'SCANSIONE OK';
+        scannerActive = false;
+        document.getElementById('scannerWrap').classList.remove('visible');
+        document.getElementById('btnScanner').classList.remove('scanning');
+        document.getElementById('scannerBtnIcon').textContent = 'qr_code_scanner';
+        document.getElementById('scannerBtnLabel').textContent = 'Avvia';
+        stopCamera();
       }
-    } catch (err) {
-      showFeedback('error', '!', 'Errore di rete', err.message);
-      document.getElementById('scanIndicator').textContent = 'ERRORE';
     }
 
-    setTimeout(() => {
-      cooldown = false;
-      ultimoScan = null;
-      document.getElementById('scanIndicator').textContent = 'ATTIVO';
-    }, 3000);
-  }
+    // ── QR SCAN ─────────────────────────────────────────────────────────────
+    async function onQRDetected(code) {
+      if (cooldown || code === ultimoScan) return;
+      cooldown = true;
+      ultimoScan = code;
 
-  // ─── CAMERA ────────────────────────────────────────────────────────────────
-  async function startCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 } }
-      });
-      const video = document.getElementById('video');
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      video.srcObject = stream;
+      document.getElementById('scanIndicator').textContent = 'ELABORO...';
+      showFeedback('loading', '⟳', 'Elaborazione...', code);
 
-      video.addEventListener('loadedmetadata', () => {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        document.getElementById('scanIndicator').textContent = 'ATTIVO';
+      try {
+        const { data: vol, error: ve } = await db
+          .from('volontari')
+          .select('*')
+          .eq('codice_qr', code)
+          .single();
 
-        function tick() {
-          if (video.readyState === video.HAVE_ENOUGH_DATA) {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imgData.data, imgData.width, imgData.height, {
-              inversionAttempts: 'dontInvert'
-            });
-            if (code) onQRDetected(code.data);
-          }
-          requestAnimationFrame(tick);
+        if (ve || !vol) {
+          showFeedback('error', '✗', 'QR non riconosciuto', code);
+          document.getElementById('scanIndicator').textContent = 'ERRORE';
+        } else {
+          const ts = new Date().toISOString();
+          const nome = `${vol.nome} ${vol.cognome}`;
+
+          await db.from('presenze').insert({
+            volontario_id: vol.id,
+            tipo: tipoCorrente,
+            timestamp: ts
+          });
+
+          const emoji = tipoCorrente === 'entrata' ? '✓' : '↩';
+          showFeedback('success', emoji, nome,
+            `${tipoCorrente.charAt(0).toUpperCase() + tipoCorrente.slice(1)} · ${new Date(ts).toLocaleTimeString('it-IT')}`);
+          addLogItem(nome, tipoCorrente, ts);
+          document.getElementById('scanIndicator').textContent = 'OK ✓';
         }
-        tick();
-      });
-    } catch (err) {
-      document.getElementById('scanIndicator').textContent = 'CAM NEGATA';
-      showFeedback('error', '!', 'Fotocamera non disponibile', 'Controlla i permessi del browser');
-    }
-  }
+      } catch (err) {
+        showFeedback('error', '!', 'Errore di rete', err.message);
+        document.getElementById('scanIndicator').textContent = 'ERRORE';
+      }
 
-  startCamera();
-</script>
+      setTimeout(() => {
+        cooldown = false;
+        ultimoScan = null;
+        document.getElementById('scanIndicator').textContent = 'ATTIVO';
+      }, 3000);
+    }
+
+    // ── CAMERA ──────────────────────────────────────────────────────────────
+    async function startCamera() {
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1280 } }
+        });
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        video.srcObject = cameraStream;
+
+        video.addEventListener('loadedmetadata', () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          document.getElementById('scanIndicator').textContent = 'ATTIVO';
+
+          function tick() {
+            if (!scannerActive) return;
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+              const code = jsQR(imgData.data, imgData.width, imgData.height, {
+                inversionAttempts: 'dontInvert'
+              });
+              if (code) onQRDetected(code.data);
+            }
+            requestAnimationFrame(tick);
+          }
+          tick();
+        });
+      } catch (err) {
+        document.getElementById('scanIndicator').textContent = 'CAM NEGATA';
+        showFeedback('error', '!', 'Fotocamera non disponibile', 'Controlla i permessi del browser');
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+      }
+    }
+
+    // ── EXPORT CSV ──────────────────────────────────────────────────────────
+    function exportCSV() {
+      if (LOG_TODAY.length === 0) {
+        showFeedback('error', '!', 'Nessun dato', 'Non ci sono scansioni da esportare oggi');
+        return;
+      }
+      const rows = [['Nome', 'Tipo', 'Orario']];
+      LOG_TODAY.forEach(e => {
+        rows.push([
+          e.nome,
+          e.tipo,
+          new Date(e.ts).toLocaleTimeString('it-IT')
+        ]);
+      });
+      const csv = rows.map(r => r.join(';')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `presenze_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
 </body>
 
 </html>
