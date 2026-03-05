@@ -56,7 +56,7 @@ Ogni scansione è un'onda. Ogni presenza, una rotta segnata sul quaderno di bord
 ```css
 /* Titolo principale */
 h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', san-serif;
   font-style: italic;
   font-weight: 900;
   font-size: clamp(2rem, 8vw, 4.5rem);
@@ -67,7 +67,7 @@ h1 {
 
 /* Sottotitoli / sezioni */
 h2 {
-  font-family: 'Cinzel', serif;
+  font-family: 'Cinzel', san-serif;
   font-size: 0.7rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
@@ -76,7 +76,7 @@ h2 {
 
 /* Testo corrente */
 p {
-  font-family: 'Lora', serif;
+  font-family: 'Lora', san-serif;
   font-size: 0.95rem;
   color: var(--parchment);
   line-height: 1.7;
