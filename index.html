@@ -7,9 +7,7 @@
   <title>Presenze Volontari</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,900&family=Lora:wght@400;600&family=Courier+Prime:wght@400;700&family=Cinzel&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *,
     *::before,
@@ -20,72 +18,34 @@
     }
 
     :root {
-      --ocean-deep: #060d18;
-      --ocean-dark: #0a1628;
-      --ocean-mid: #0f2040;
-      --ocean-light: #1a3a6e;
-      --foam: #f0ede4;
-      --parchment: #d4c9a8;
-      --whale-white: #e8e0cc;
-      --ink-gold: #c9a84c;
-      --biolum: #4dd9c0;
-      --danger-coral: #e05a4e;
-      --wave: #1e4f82;
-      --border: rgba(201, 168, 76, 0.18);
-      --radius: 4px;
-      /* Quasi sharp corners per design */
+      --bg-light: #f8fafc;
+      --surface: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --moby-blue: #3b7f9e;
+      --moby-green: #10b981;
+      --moby-red: #ef4444;
+      --border-light: rgba(0, 0, 0, 0.06);
+      --radius-card: 20px;
+      --radius-btn: 12px;
     }
 
-    /* Ambient wave gradients */
     body {
-      background:
-        radial-gradient(ellipse at 50% 0%, rgba(30, 79, 130, 0.25) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 80%, rgba(77, 217, 192, 0.04) 0%, transparent 50%),
-        linear-gradient(180deg, var(--ocean-deep) 0%, var(--ocean-dark) 100%);
-      color: var(--whale-white);
-      font-family: 'Lora', serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
-    }
-
-    /* Noise texture sovrapposta */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      opacity: 0.04;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Pattern carta nautica — Linee di latitudine/longitudine sottilissime */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(201, 168, 76, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201, 168, 76, 0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .vignette {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse at center, transparent 40%, rgba(6, 13, 24, 0.8) 100%);
-      pointer-events: none;
-      z-index: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
     main {
-      position: relative;
-      z-index: 1;
       max-width: 480px;
       margin: 0 auto;
       padding: 24px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     /* HEADER */
@@ -93,7 +53,6 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 32px;
       padding-top: 8px;
     }
 
@@ -104,117 +63,116 @@
     }
 
     .logo-tag {
-      font-family: 'Cinzel', serif;
       font-size: 0.7rem;
-      color: var(--ink-gold);
-      letter-spacing: 0.25em;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
       text-transform: uppercase;
     }
 
     h1 {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-weight: 900;
-      font-size: clamp(2rem, 8vw, 3rem);
-      /* Slightly smaller than design purely for fit alongside logo */
-      color: var(--whale-white);
+      font-weight: 700;
+      font-size: clamp(1.6rem, 7vw, 2.4rem);
+      color: var(--text-primary);
       letter-spacing: -0.02em;
-      line-height: 1.05;
-      margin-top: 5px;
+      line-height: 1.1;
+      margin-top: 2px;
     }
 
     .status-dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      background: var(--biolum);
-      box-shadow: 0 0 8px rgba(77, 217, 192, 0.3);
-      animation: ocean-breath 4s ease-in-out infinite;
+      background: var(--moby-green);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: pulse-green 2.5s ease-in-out infinite;
     }
 
-    @keyframes ocean-breath {
+    @keyframes pulse-green {
 
       0%,
       100% {
-        transform: scale(1);
-        opacity: 0.9;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
       }
 
       50% {
-        transform: scale(1.6);
-        opacity: 0.4;
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.08);
       }
     }
 
     /* TIME */
     .time-display {
       text-align: center;
-      margin-bottom: 28px;
       padding: 20px;
-      background: rgba(15, 32, 64, 0.6);
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      border-radius: var(--radius);
-      backdrop-filter: blur(12px);
-      box-shadow:
-        0 0 0 1px rgba(201, 168, 76, 0.05),
-        0 8px 32px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(240, 237, 228, 0.05);
-      position: relative;
-    }
-
-    .time-display::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 20%;
-      right: 20%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--ink-gold), transparent);
-      opacity: 0.5;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
     }
 
     .time {
-      font-family: 'Courier Prime', monospace;
       font-size: 42px;
       font-weight: 700;
-      color: var(--ink-gold);
+      color: var(--text-primary);
       line-height: 1;
-      letter-spacing: -1px;
+      letter-spacing: -2px;
     }
 
     .date {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      color: var(--parchment);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
       margin-top: 6px;
-      letter-spacing: 0.25em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    }
+
+    .stat-num {
+      font-weight: 700;
+      font-size: clamp(2rem, 8vw, 2.4rem);
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .stat-card.entrate .stat-num {
+      color: var(--moby-green);
+    }
+
+    .stat-card.uscite .stat-num {
+      color: var(--moby-blue);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
     }
 
     /* SCANNER */
     .scanner-card {
-      background: rgba(15, 32, 64, 0.6);
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      border-radius: var(--radius);
-      backdrop-filter: blur(12px);
-      box-shadow:
-        0 0 0 1px rgba(201, 168, 76, 0.05),
-        0 8px 32px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(240, 237, 228, 0.05);
-      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-card);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
       overflow: hidden;
-      margin-bottom: 24px;
-    }
-
-    .scanner-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 20%;
-      right: 20%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--ink-gold), transparent);
-      opacity: 0.5;
     }
 
     .scanner-header {
@@ -222,22 +180,21 @@
       align-items: center;
       justify-content: space-between;
       padding: 16px 20px;
-      border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+      border-bottom: 1px solid var(--border-light);
     }
 
     .scanner-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.25em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--ink-gold);
+      color: var(--text-secondary);
     }
 
     .scan-indicator {
-      font-family: 'Courier Prime', monospace;
-      font-size: 10px;
-      color: var(--biolum);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--moby-green);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -245,30 +202,17 @@
 
     .scan-indicator::before {
       content: '';
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--biolum);
-      box-shadow: 0 0 8px rgba(77, 217, 192, 0.3);
-      animation: biolum-pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes biolum-pulse {
-
-      0%,
-      100% {
-        box-shadow: 0 0 8px rgba(77, 217, 192, 0.3);
-      }
-
-      50% {
-        box-shadow: 0 0 24px rgba(77, 217, 192, 0.7);
-      }
+      background: var(--moby-green);
+      animation: pulse-green 2s ease-in-out infinite;
     }
 
     .video-wrap {
       position: relative;
       aspect-ratio: 1 / 1;
-      background: #000;
+      background: #0f172a;
       overflow: hidden;
     }
 
@@ -305,12 +249,11 @@
     .scan-frame span::after {
       content: '';
       position: absolute;
-      width: 32px;
-      height: 32px;
-      border-color: var(--ink-gold);
+      width: 28px;
+      height: 28px;
+      border-color: #ffffff;
       border-style: solid;
-      opacity: 0.9;
-      box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+      opacity: 0.85;
     }
 
     .scan-frame::before {
@@ -342,8 +285,8 @@
       left: 10%;
       right: 10%;
       height: 2px;
-      background: linear-gradient(90deg, transparent, var(--biolum), transparent);
-      box-shadow: 0 0 12px var(--biolum), 0 0 4px rgba(77, 217, 192, 0.8);
+      background: linear-gradient(90deg, transparent, var(--moby-green), transparent);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
       animation: wave-scan 2.8s ease-in-out infinite;
       top: 0;
     }
@@ -371,81 +314,52 @@
     /* TIPO SWITCH */
     .tipo-switch {
       display: flex;
-      gap: 8px;
-      padding: 16px 20px;
-      border-top: 1px solid rgba(201, 168, 76, 0.2);
+      gap: 10px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border-light);
     }
 
     .tipo-btn {
       flex: 1;
       padding: 12px;
-      background: transparent;
-      border: 1px solid var(--ink-gold);
-      color: var(--ink-gold);
-      font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      background: var(--bg-light);
+      border: 1.5px solid var(--border-light);
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
       cursor: pointer;
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-      border-radius: var(--radius);
-    }
-
-    .tipo-btn::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 0;
-      background: rgba(201, 168, 76, 0.1);
-      transition: height 0.4s ease;
-      z-index: -1;
-    }
-
-    .tipo-btn:hover::after {
-      height: 100%;
+      transition: all 0.2s ease;
+      border-radius: var(--radius-btn);
     }
 
     .tipo-btn:hover {
-      box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
-      color: var(--foam);
+      background: #f1f5f9;
+      border-color: #94a3b8;
     }
 
     .tipo-btn.active-entrata {
-      border-color: var(--biolum);
-      color: var(--biolum);
-      background: rgba(77, 217, 192, 0.1);
-    }
-
-    .tipo-btn.active-entrata:hover {
-      box-shadow: 0 0 20px rgba(77, 217, 192, 0.3);
+      border-color: var(--moby-green);
+      color: var(--moby-green);
+      background: #f0fdf4;
     }
 
     .tipo-btn.active-uscita {
-      border-color: var(--danger-coral);
-      color: var(--danger-coral);
-      background: rgba(224, 90, 78, 0.1);
-    }
-
-    .tipo-btn.active-uscita:hover {
-      box-shadow: 0 0 20px rgba(224, 90, 78, 0.3);
+      border-color: var(--moby-red);
+      color: var(--moby-red);
+      background: #fef2f2;
     }
 
     /* FEEDBACK */
     .feedback {
       padding: 16px 20px;
-      border-radius: var(--radius);
-      margin-bottom: 20px;
+      border-radius: var(--radius-card);
       font-weight: 600;
       font-size: 14px;
       display: none;
       align-items: center;
       gap: 12px;
       animation: slideIn 0.3s ease;
-      border: 1px solid;
     }
 
     .feedback.show {
@@ -453,30 +367,21 @@
     }
 
     .feedback.success {
-      border-left: 3px solid var(--biolum);
-      background: rgba(77, 217, 192, 0.08);
-      font-family: 'Lora', serif;
-      font-style: italic;
-      color: var(--biolum);
-      border-color: rgba(77, 217, 192, 0.3);
+      background: #f0fdf4;
+      border: 1.5px solid rgba(16, 185, 129, 0.3);
+      color: #15803d;
     }
 
     .feedback.error {
-      border-left: 3px solid var(--danger-coral);
-      background: rgba(224, 90, 78, 0.08);
-      color: var(--danger-coral);
-      border-color: rgba(224, 90, 78, 0.3);
-      font-family: 'Lora', serif;
-      font-style: italic;
+      background: #fef2f2;
+      border: 1.5px solid rgba(239, 68, 68, 0.3);
+      color: #b91c1c;
     }
 
     .feedback.loading {
-      border-left: 3px solid var(--ink-gold);
-      background: rgba(201, 168, 76, 0.08);
-      color: var(--ink-gold);
-      border-color: rgba(201, 168, 76, 0.3);
-      font-family: 'Lora', serif;
-      font-style: italic;
+      background: #eff6ff;
+      border: 1.5px solid rgba(59, 127, 158, 0.3);
+      color: var(--moby-blue);
     }
 
     .feedback-icon {
@@ -491,19 +396,18 @@
     }
 
     .feedback-name {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
     }
 
     .feedback-sub {
-      font-family: 'Courier Prime', monospace;
       font-size: 11px;
       opacity: 0.7;
     }
 
     @keyframes slideIn {
       from {
-        transform: translateY(16px);
+        transform: translateY(12px);
         opacity: 0;
       }
 
@@ -515,14 +419,14 @@
 
     /* LOG */
     .log-section {
-      margin-top: 8px;
+      margin-top: 4px;
     }
 
     .section-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      color: var(--ink-gold);
-      letter-spacing: 0.25em;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 12px;
       display: flex;
@@ -534,25 +438,25 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: linear-gradient(90deg, var(--ink-gold), transparent);
-      opacity: 0.3;
+      background: var(--border-light);
     }
 
     .log-list {
       display: flex;
       flex-direction: column;
-      gap: 0;
+      gap: 8px;
     }
 
     .log-item {
       display: flex;
-      align-items: baseline;
-      gap: 16px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(201, 168, 76, 0.08);
-      font-family: 'Lora', serif;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
       animation: slideIn 0.3s ease;
-      background: transparent;
     }
 
     .log-info {
@@ -561,140 +465,42 @@
 
     .log-nome {
       font-size: 0.9rem;
-      color: var(--whale-white);
-      font-style: italic;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
     }
 
     .log-meta {
-      font-family: 'Courier Prime', monospace;
-      font-size: 0.75rem;
-      color: var(--ink-gold);
-      opacity: 0.7;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
       flex-shrink: 0;
-      min-width: 60px;
-      order: -1;
+      min-width: 52px;
     }
 
     .log-tipo {
-      font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
-      letter-spacing: 0.15em;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
-      padding: 2px 8px;
-      border: 1px solid;
-      border-radius: 2px;
-      margin-left: auto;
+      padding: 3px 8px;
+      border-radius: 6px;
     }
 
     .log-tipo.entrata {
-      border-color: rgba(77, 217, 192, 0.4);
-      color: var(--biolum);
+      background: #dcfce7;
+      color: #15803d;
     }
 
     .log-tipo.uscita {
-      border-color: rgba(224, 90, 78, 0.4);
-      color: var(--danger-coral);
+      background: #e0f2fe;
+      color: var(--moby-blue);
     }
 
     .log-empty {
       text-align: center;
       padding: 32px;
-      color: var(--parchment);
-      font-family: 'Lora', serif;
-      font-style: italic;
+      color: var(--text-secondary);
       font-size: 0.9rem;
-    }
-
-    /* CAMERA BTN */
-    .cam-btn {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 207, 255, 0.15));
-      border: 1px solid var(--accent);
-      border-radius: var(--radius);
-      color: var(--accent);
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-      margin-bottom: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cam-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 207, 255, 0.2));
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .cam-btn:hover::before {
-      opacity: 1;
-    }
-
-    .cam-btn:hover {
-      box-shadow: var(--glow);
-      transform: translateY(-1px);
-    }
-
-    /* STATS ROW */
-    .stats-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .stat-card {
-      background: rgba(15, 32, 64, 0.6);
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      border-radius: var(--radius);
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 10%;
-      right: 10%;
-      height: 1px;
-    }
-
-    .stat-card.entrate::before {
-      background: linear-gradient(90deg, transparent, var(--biolum), transparent);
-    }
-
-    .stat-card.uscite::before {
-      background: linear-gradient(90deg, transparent, var(--danger-coral), transparent);
-    }
-
-    .stat-num {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-weight: 900;
-      font-size: clamp(2rem, 8vw, 2.5rem);
-      line-height: 1;
-      color: var(--whale-white);
-      text-shadow: 0 0 10px rgba(201, 168, 76, 0.3);
-    }
-
-    .stat-label {
-      font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      color: var(--parchment);
-      margin-top: 6px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
     }
 
     /* SCROLLBAR */
@@ -707,156 +513,135 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: var(--border);
+      background: #cbd5e1;
       border-radius: 4px;
     }
   </style>
 </head>
 
-<body>
-  <div class="ambient-blob"></div>
 
-  <!-- Balena semitrasparente come watermark -->
-  <svg class="whale-bg" viewBox="0 0 200 100" fill="none">
-    <path d="M10,50 Q40,20 80,40 Q120,60 160,35 Q180,28 190,50
-             Q180,65 160,58 Q120,75 80,60 Q40,75 20,65 Z" fill="rgba(240,237,228,0.025)" />
-    <path d="M185,50 Q195,40 198,50 Q195,60 185,55" fill="rgba(240,237,228,0.025)" />
-  </svg>
-
-  <style>
-    .whale-bg {
-      position: fixed;
-      bottom: 5%;
-      right: -5%;
-      width: 60vw;
-      max-width: 400px;
-      pointer-events: none;
-      z-index: 0;
-    }
-  </style>
-
-  <main>
-    <header>
-      <div class="logo-group">
-        <img src="logo/logo_mobydickets-1-3.png" alt="Moby Dick ETS"
-          style="height: 60px; object-fit: contain; margin-bottom: 8px;">
-        <span class="logo-tag">Servizio Civile</span>
-        <h1>Presenze</h1>
-      </div>
-      <div class="status-dot" id="statusDot"></div>
-    </header>
-
-    <div class="time-display">
-      <div class="time" id="clock">00:00:00</div>
-      <div class="date" id="dateLabel">—</div>
+<main>
+  <header>
+    <div class="logo-group">
+      <img src="logo/logo_mobydickets-1-3.png" alt="Moby Dick ETS"
+        style="height: 60px; object-fit: contain; margin-bottom: 8px;">
+      <span class="logo-tag">Servizio Civile</span>
+      <h1>Presenze</h1>
     </div>
+    <div class="status-dot" id="statusDot"></div>
+  </header>
 
-    <div class="stats-row">
-      <div class="stat-card entrate">
-        <div class="stat-num" id="statEntrate">0</div>
-        <div class="stat-label">Entrate oggi</div>
-      </div>
-      <div class="stat-card uscite">
-        <div class="stat-num" id="statUscite">0</div>
-        <div class="stat-label">Uscite oggi</div>
-      </div>
+  <div class="time-display">
+    <div class="time" id="clock">00:00:00</div>
+    <div class="date" id="dateLabel">—</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card entrate">
+      <div class="stat-num" id="statEntrate">0</div>
+      <div class="stat-label">Entrate oggi</div>
     </div>
+    <div class="stat-card uscite">
+      <div class="stat-num" id="statUscite">0</div>
+      <div class="stat-label">Uscite oggi</div>
+    </div>
+  </div>
 
-    <div class="scanner-card">
-      <div class="scanner-header">
-        <span class="scanner-title">Scanner QR</span>
-        <span class="scan-indicator" id="scanIndicator">IN ATTESA</span>
-      </div>
-      <div class="video-wrap">
-        <video id="video" autoplay muted playsinline></video>
-        <canvas id="canvas"></canvas>
-        <div class="scan-overlay">
-          <div class="scan-frame">
-            <span></span>
-            <div class="scan-line"></div>
-          </div>
+  <div class="scanner-card">
+    <div class="scanner-header">
+      <span class="scanner-title">Scanner QR</span>
+      <span class="scan-indicator" id="scanIndicator">IN ATTESA</span>
+    </div>
+    <div class="video-wrap">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="canvas"></canvas>
+      <div class="scan-overlay">
+        <div class="scan-frame">
+          <span></span>
+          <div class="scan-line"></div>
         </div>
       </div>
-      <div class="tipo-switch">
-        <button class="tipo-btn active-entrata" id="btnEntrata" onclick="setTipo('entrata')">⬆️ Entrata</button>
-        <button class="tipo-btn" id="btnUscita" onclick="setTipo('uscita')">⬇️ Uscita</button>
-      </div>
     </div>
-
-    <div class="feedback" id="feedback">
-      <div class="feedback-icon" id="feedbackIcon">✓</div>
-      <div class="feedback-text">
-        <div class="feedback-name" id="feedbackName">—</div>
-        <div class="feedback-sub" id="feedbackSub">—</div>
-      </div>
+    <div class="tipo-switch">
+      <button class="tipo-btn active-entrata" id="btnEntrata" onclick="setTipo('entrata')">⬆️ Entrata</button>
+      <button class="tipo-btn" id="btnUscita" onclick="setTipo('uscita')">⬇️ Uscita</button>
     </div>
+  </div>
 
-    <div class="log-section">
-      <div class="section-label">Log di oggi</div>
-      <div class="log-list" id="logList">
-        <div class="log-empty">Nessuna scansione ancora</div>
-      </div>
+  <div class="feedback" id="feedback">
+    <div class="feedback-icon" id="feedbackIcon">✓</div>
+    <div class="feedback-text">
+      <div class="feedback-name" id="feedbackName">—</div>
+      <div class="feedback-sub" id="feedbackSub">—</div>
     </div>
-  </main>
+  </div>
 
-  <script>
-    // ─── CONFIG ────────────────────────────────────────────────────────────────
-    const SUPABASE_URL = 'https://czsbkfbtjlrbugmggzpn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6c2JrZmJ0amxyYnVnbWdnenBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MTY4MzEsImV4cCI6MjA4ODE5MjgzMX0.bAl9rSpvN2eAGSUhyBYg4aKvgnwPwrLP8fDiUkQ1grM';
+  <div class="log-section">
+    <div class="section-label">Log di oggi</div>
+    <div class="log-list" id="logList">
+      <div class="log-empty">Nessuna scansione ancora</div>
+    </div>
+  </div>
+</main>
 
-    // ─── INIT ──────────────────────────────────────────────────────────────────
-    const { createClient } = supabase;
-    const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+<script>
+  // ─── CONFIG ────────────────────────────────────────────────────────────────
+  const SUPABASE_URL = 'https://czsbkfbtjlrbugmggzpn.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6c2JrZmJ0amxyYnVnbWdnenBuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MTY4MzEsImV4cCI6MjA4ODE5MjgzMX0.bAl9rSpvN2eAGSUhyBYg4aKvgnwPwrLP8fDiUkQ1grM';
 
-    let tipoCorrente = 'entrata';
-    let ultimoScan = null;
-    let cooldown = false;
-    const LOG_TODAY = [];
+  // ─── INIT ──────────────────────────────────────────────────────────────────
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ─── CLOCK ─────────────────────────────────────────────────────────────────
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
-      document.getElementById('dateLabel').textContent = now.toLocaleDateString('it-IT', {
-        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-      });
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+  let tipoCorrente = 'entrata';
+  let ultimoScan = null;
+  let cooldown = false;
+  const LOG_TODAY = [];
 
-    // ─── TIPO ──────────────────────────────────────────────────────────────────
-    function setTipo(tipo) {
-      tipoCorrente = tipo;
-      document.getElementById('btnEntrata').className = 'tipo-btn' + (tipo === 'entrata' ? ' active-entrata' : '');
-      document.getElementById('btnUscita').className = 'tipo-btn' + (tipo === 'uscita' ? ' active-uscita' : '');
-    }
+  // ─── CLOCK ─────────────────────────────────────────────────────────────────
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT');
+    document.getElementById('dateLabel').textContent = now.toLocaleDateString('it-IT', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
 
-    // ─── FEEDBACK ──────────────────────────────────────────────────────────────
-    function showFeedback(type, icon, name, sub) {
-      const el = document.getElementById('feedback');
-      el.className = 'feedback show ' + type;
-      document.getElementById('feedbackIcon').textContent = icon;
-      document.getElementById('feedbackName').textContent = name;
-      document.getElementById('feedbackSub').textContent = sub;
-      setTimeout(() => el.classList.remove('show'), 4000);
-    }
+  // ─── TIPO ──────────────────────────────────────────────────────────────────
+  function setTipo(tipo) {
+    tipoCorrente = tipo;
+    document.getElementById('btnEntrata').className = 'tipo-btn' + (tipo === 'entrata' ? ' active-entrata' : '');
+    document.getElementById('btnUscita').className = 'tipo-btn' + (tipo === 'uscita' ? ' active-uscita' : '');
+  }
 
-    // ─── STATS ─────────────────────────────────────────────────────────────────
-    function updateStats() {
-      const entrate = LOG_TODAY.filter(l => l.tipo === 'entrata').length;
-      const uscite = LOG_TODAY.filter(l => l.tipo === 'uscita').length;
-      document.getElementById('statEntrate').textContent = entrate;
-      document.getElementById('statUscite').textContent = uscite;
-    }
+  // ─── FEEDBACK ──────────────────────────────────────────────────────────────
+  function showFeedback(type, icon, name, sub) {
+    const el = document.getElementById('feedback');
+    el.className = 'feedback show ' + type;
+    document.getElementById('feedbackIcon').textContent = icon;
+    document.getElementById('feedbackName').textContent = name;
+    document.getElementById('feedbackSub').textContent = sub;
+    setTimeout(() => el.classList.remove('show'), 4000);
+  }
 
-    // ─── LOG ───────────────────────────────────────────────────────────────────
-    function addLogItem(nome, tipo, ts) {
-      LOG_TODAY.unshift({ nome, tipo, ts });
-      const list = document.getElementById('logList');
-      list.innerHTML = '';
-      LOG_TODAY.slice(0, 12).forEach(entry => {
-        const t = new Date(entry.ts).toLocaleTimeString('it-IT');
-        list.insertAdjacentHTML('beforeend', `
+  // ─── STATS ─────────────────────────────────────────────────────────────────
+  function updateStats() {
+    const entrate = LOG_TODAY.filter(l => l.tipo === 'entrata').length;
+    const uscite = LOG_TODAY.filter(l => l.tipo === 'uscita').length;
+    document.getElementById('statEntrate').textContent = entrate;
+    document.getElementById('statUscite').textContent = uscite;
+  }
+
+  // ─── LOG ───────────────────────────────────────────────────────────────────
+  function addLogItem(nome, tipo, ts) {
+    LOG_TODAY.unshift({ nome, tipo, ts });
+    const list = document.getElementById('logList');
+    list.innerHTML = '';
+    LOG_TODAY.slice(0, 12).forEach(entry => {
+      const t = new Date(entry.ts).toLocaleTimeString('it-IT');
+      list.insertAdjacentHTML('beforeend', `
         <div class="log-item">
           <div class="log-badge ${entry.tipo}"></div>
           <div class="log-info">
@@ -866,96 +651,96 @@
           <div class="log-tipo ${entry.tipo}">${entry.tipo}</div>
         </div>
       `);
-      });
-      updateStats();
-    }
+    });
+    updateStats();
+  }
 
-    // ─── QR SCAN ───────────────────────────────────────────────────────────────
-    async function onQRDetected(code) {
-      if (cooldown || code === ultimoScan) return;
-      cooldown = true;
-      ultimoScan = code;
+  // ─── QR SCAN ───────────────────────────────────────────────────────────────
+  async function onQRDetected(code) {
+    if (cooldown || code === ultimoScan) return;
+    cooldown = true;
+    ultimoScan = code;
 
-      document.getElementById('scanIndicator').textContent = 'ELABORO...';
-      showFeedback('loading', '⟳', 'Elaborazione...', code);
+    document.getElementById('scanIndicator').textContent = 'ELABORO...';
+    showFeedback('loading', '⟳', 'Elaborazione...', code);
 
-      try {
-        // Cerca volontario per codice_qr
-        const { data: vol, error: ve } = await db
-          .from('volontari')
-          .select('*')
-          .eq('codice_qr', code)
-          .single();
+    try {
+      // Cerca volontario per codice_qr
+      const { data: vol, error: ve } = await db
+        .from('volontari')
+        .select('*')
+        .eq('codice_qr', code)
+        .single();
 
-        if (ve || !vol) {
-          showFeedback('error', '✗', 'QR non riconosciuto', code);
-          document.getElementById('scanIndicator').textContent = 'ERRORE';
-        } else {
-          const ts = new Date().toISOString();
-          const nome = `${vol.nome} ${vol.cognome}`;
-
-          await db.from('presenze').insert({
-            volontario_id: vol.id,
-            tipo: tipoCorrente,
-            timestamp: ts
-          });
-
-          const emoji = tipoCorrente === 'entrata' ? '✓' : '✗';
-          showFeedback('success', emoji, nome,
-            `${tipoCorrente.toUpperCase()} registrata · ${new Date(ts).toLocaleTimeString('it-IT')}`);
-
-          addLogItem(nome, tipoCorrente, ts);
-          document.getElementById('scanIndicator').textContent = 'SCANSIONE OK';
-        }
-      } catch (err) {
-        showFeedback('error', '!', 'Errore di rete', err.message);
+      if (ve || !vol) {
+        showFeedback('error', '✗', 'QR non riconosciuto', code);
         document.getElementById('scanIndicator').textContent = 'ERRORE';
-      }
+      } else {
+        const ts = new Date().toISOString();
+        const nome = `${vol.nome} ${vol.cognome}`;
 
-      setTimeout(() => {
-        cooldown = false;
-        ultimoScan = null;
+        await db.from('presenze').insert({
+          volontario_id: vol.id,
+          tipo: tipoCorrente,
+          timestamp: ts
+        });
+
+        const emoji = tipoCorrente === 'entrata' ? '✓' : '✗';
+        showFeedback('success', emoji, nome,
+          `${tipoCorrente.toUpperCase()} registrata · ${new Date(ts).toLocaleTimeString('it-IT')}`);
+
+        addLogItem(nome, tipoCorrente, ts);
+        document.getElementById('scanIndicator').textContent = 'SCANSIONE OK';
+      }
+    } catch (err) {
+      showFeedback('error', '!', 'Errore di rete', err.message);
+      document.getElementById('scanIndicator').textContent = 'ERRORE';
+    }
+
+    setTimeout(() => {
+      cooldown = false;
+      ultimoScan = null;
+      document.getElementById('scanIndicator').textContent = 'ATTIVO';
+    }, 3000);
+  }
+
+  // ─── CAMERA ────────────────────────────────────────────────────────────────
+  async function startCamera() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 } }
+      });
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      video.srcObject = stream;
+
+      video.addEventListener('loadedmetadata', () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
         document.getElementById('scanIndicator').textContent = 'ATTIVO';
-      }, 3000);
-    }
 
-    // ─── CAMERA ────────────────────────────────────────────────────────────────
-    async function startCamera() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment', width: { ideal: 1280 } }
-        });
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        video.srcObject = stream;
-
-        video.addEventListener('loadedmetadata', () => {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          document.getElementById('scanIndicator').textContent = 'ATTIVO';
-
-          function tick() {
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-              const code = jsQR(imgData.data, imgData.width, imgData.height, {
-                inversionAttempts: 'dontInvert'
-              });
-              if (code) onQRDetected(code.data);
-            }
-            requestAnimationFrame(tick);
+        function tick() {
+          if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imgData.data, imgData.width, imgData.height, {
+              inversionAttempts: 'dontInvert'
+            });
+            if (code) onQRDetected(code.data);
           }
-          tick();
-        });
-      } catch (err) {
-        document.getElementById('scanIndicator').textContent = 'CAM NEGATA';
-        showFeedback('error', '!', 'Fotocamera non disponibile', 'Controlla i permessi del browser');
-      }
+          requestAnimationFrame(tick);
+        }
+        tick();
+      });
+    } catch (err) {
+      document.getElementById('scanIndicator').textContent = 'CAM NEGATA';
+      showFeedback('error', '!', 'Fotocamera non disponibile', 'Controlla i permessi del browser');
     }
+  }
 
-    startCamera();
-  </script>
+  startCamera();
+</script>
 </body>
 
 </html>
