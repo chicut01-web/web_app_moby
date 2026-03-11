@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import jsQR from 'jsqr';
 import { db } from '../utils/supabase';
 
 export default function Scanner({ active, showFeedback, hideFeedback }) {
@@ -53,20 +54,20 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
     setScanStatus('IN ATTESA DEL BERSAGLIO');
     setScanState('idle');
 
-    const tick = () => {
+    let lastScan = 0;
+    const tick = (timestamp) => {
       if (!streamRef.current || !active) return;
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      if (timestamp - lastScan > 200 && video.readyState === video.HAVE_ENOUGH_DATA) {
+        lastScan = timestamp;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        import('jsqr').then(({ default: jsQR }) => {
-          const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' });
-          if (code) onQRDetected(code.data);
-        });
+        const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' });
+        if (code) onQRDetected(code.data);
       }
       requestAnimationFrame(tick);
     };
-    tick();
+    requestAnimationFrame(tick);
   };
 
   const onQRDetected = async (code) => {

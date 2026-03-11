@@ -19,11 +19,9 @@ export default function App() {
 
   return (
     <div className="min-h-dvh flex flex-col relative">
-      {/* Animated mesh blobs */}
-      <div className="mesh-blob animate-float-slow bg-primary/30" style={{ width: 600, height: 600, top: '10%', right: '10%', animationDuration: '12s' }} />
-      <div className="mesh-blob animate-float bg-secondary/40" style={{ width: 400, height: 400, bottom: '20%', left: '-10%', animationDelay: '-3s' }} />
-      <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: -100, left: -100, background: 'rgba(74,142,170,0.2)' }} />
-      <div className="mesh-blob animate-float" style={{ width: 500, height: 500, bottom: -100, right: -100, background: 'rgba(243,156,18,0.1)', animationDelay: '-2s' }} />
+      {/* Animated mesh blobs — keep to 2 for performance */}
+      <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'rgba(74,142,170,0.18)', animationDuration: '14s' }} />
+      <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'rgba(220,235,242,0.5)', animationDelay: '-4s' }} />
 
       {/* Header */}
       <header className="fixed top-4 left-4 right-4 z-50 animate-reveal">

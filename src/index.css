@@ -34,10 +34,10 @@ html, body {
 
 /* Liquid glass utility */
 .liquid-glass {
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.4);
-  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.08);
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.07);
 }
 
 .glass-gradient-bg {
@@ -55,10 +55,11 @@ html, body {
 /* Mesh blobs */
 .mesh-blob {
   position: fixed;
-  filter: blur(100px);
+  filter: blur(60px);
   z-index: -1;
-  opacity: 0.5;
+  opacity: 0.4;
   pointer-events: none;
+  will-change: transform;
 }
 
 /* Animations */
@@ -110,8 +111,8 @@ html, body {
   100% { top: 0%; }
 }
 
-.animate-float { animation: float 6s ease-in-out infinite; }
-.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+.animate-float { animation: float 6s ease-in-out infinite; will-change: transform; }
+.animate-float-slow { animation: float-slow 8s ease-in-out infinite; will-change: transform; }
 .animate-reveal { animation: reveal-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
 .animate-glow { animation: glow-pulse 3s infinite; }
 
