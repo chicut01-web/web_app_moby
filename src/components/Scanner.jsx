@@ -54,19 +54,29 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    
+    // Set canvas to a smaller fixed dimension strictly for jsQR parsing
+    // This prevents 1080p frames from crashing the mobile CPU
+    const MAX_DIM = 400;
+    const scale = Math.min(MAX_DIM / video.videoWidth, MAX_DIM / video.videoHeight, 1);
+    canvas.width = video.videoWidth * scale;
+    canvas.height = video.videoHeight * scale;
+    
     setScanStatus('IN ATTESA DEL BERSAGLIO');
     setScanState('idle');
 
     let lastScan = 0;
     const tick = (timestamp) => {
       if (!streamRef.current || !active) return;
-      if (timestamp - lastScan > 200 && video.readyState === video.HAVE_ENOUGH_DATA) {
+      // Throttle to every 400ms to save CPU
+      if (timestamp - lastScan > 400 && video.readyState === video.HAVE_ENOUGH_DATA) {
         lastScan = timestamp;
-        const ctx = canvas.getContext('2d');
+        // willReadFrequently optimizes performance for repeated getImageData calls
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        
+        // Pass the much smaller image array to jsQR
         const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' });
         if (code) onQRDetected(code.data);
       }
