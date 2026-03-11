@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Home from './components/Home';
 import Scanner from './components/Scanner';
+import Staff from './components/Staff';
+import Events from './components/Events';
+import Menu from './components/Menu';
 import FeedbackOverlay from './components/FeedbackOverlay';
 import './index.css';
 
@@ -18,7 +21,7 @@ export default function App() {
   const hideFeedback = () => setFeedback(f => ({ ...f, show: false }));
 
   return (
-    <div className="min-h-dvh flex flex-col relative">
+    <div className="min-h-dvh flex flex-col relative text-slate-800">
       {/* Animated mesh blobs — keep to 2 for performance */}
       <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'rgba(74,142,170,0.18)', animationDuration: '14s' }} />
       <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'rgba(220,235,242,0.5)', animationDelay: '-4s' }} />
@@ -49,9 +52,9 @@ export default function App() {
       <main className="relative z-10 flex-grow pt-36 pb-32 px-6 max-w-md mx-auto w-full">
         {view === 'home' && <Home onScannerOpen={() => setView('scanner')} />}
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
-        {view === 'events' && <EventsPlaceholder />}
-        {view === 'staff' && <StaffPlaceholder />}
-        {view === 'menu' && <MenuPlaceholder />}
+        {view === 'events' && <Events />}
+        {view === 'staff' && <Staff />}
+        {view === 'menu' && <Menu />}
       </main>
 
       {/* Bottom Navigation */}
@@ -85,7 +88,7 @@ function NavBtn({ icon, label, active, fill, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center group ${active ? 'text-primary' : 'text-slate-400'}`}
+      className={`flex flex-col items-center group transition-colors duration-300 ${active ? 'text-primary' : 'text-slate-400'}`}
     >
       <span
         className={`material-symbols-outlined transition-transform group-active:scale-75${active && fill ? ' fill-1' : ''}`}
@@ -93,43 +96,7 @@ function NavBtn({ icon, label, active, fill, onClick }) {
       >
         {icon}
       </span>
-      <span className={`text-[9px] mt-0.5 uppercase tracking-tighter ${active ? 'font-black' : 'font-bold'}`}>{label}</span>
+      <span className={`text-[9px] mt-0.5 uppercase tracking-tighter transition-all ${active ? 'font-black scale-110' : 'font-bold'}`}>{label}</span>
     </button>
-  );
-}
-
-function EventsPlaceholder() {
-  return (
-    <div className="flex items-center justify-center h-64">
-      <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-8 text-center">
-        <span className="material-symbols-outlined text-primary" style={{ fontSize: 48 }}>calendar_month</span>
-        <p className="text-slate-600 font-bold mt-3">Eventi</p>
-        <p className="text-slate-400 text-sm mt-1">Prossimamente</p>
-      </div>
-    </div>
-  );
-}
-
-function StaffPlaceholder() {
-  return (
-    <div className="flex items-center justify-center h-64">
-      <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-8 text-center">
-        <span className="material-symbols-outlined text-primary" style={{ fontSize: 48 }}>group</span>
-        <p className="text-slate-600 font-bold mt-3">Staff</p>
-        <p className="text-slate-400 text-sm mt-1">Prossimamente</p>
-      </div>
-    </div>
-  );
-}
-
-function MenuPlaceholder() {
-  return (
-    <div className="flex items-center justify-center h-64">
-      <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-8 text-center">
-        <span className="material-symbols-outlined text-primary" style={{ fontSize: 48 }}>settings</span>
-        <p className="text-slate-600 font-bold mt-3">Impostazioni</p>
-        <p className="text-slate-400 text-sm mt-1">Prossimamente</p>
-      </div>
-    </div>
   );
 }

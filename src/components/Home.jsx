@@ -2,29 +2,61 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../utils/supabase';
 
 export default function Home({ onScannerOpen }) {
-  const [scansioni, setScansioni] = useState(142);
-  const [inSede, setInSede] = useState(4);
+  const [scansioni, setScansioni] = useState(0);
+  const [inSede, setInSede] = useState(0);
+  const [logs, setLogs] = useState([]);
 
-  // Load real stats from Supabase
+  // Load real stats and logs from Supabase
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
 
-    async function fetchStats() {
-      const { data } = await db
+    async function fetchData() {
+      // Fetch stats
+      const { data: presenzeData } = await db
         .from('presenze')
         .select('tipo')
         .gte('timestamp', today + 'T00:00:00')
         .lte('timestamp', today + 'T23:59:59');
 
-      if (data) {
-        setScansioni(data.length);
-        const entrate = data.filter(r => r.tipo === 'entrata').length;
-        const uscite = data.filter(r => r.tipo === 'uscita').length;
+      if (presenzeData) {
+        setScansioni(presenzeData.length);
+        const entrate = presenzeData.filter(r => r.tipo === 'entrata').length;
+        const uscite = presenzeData.filter(r => r.tipo === 'uscita').length;
         setInSede(Math.max(0, entrate - uscite));
+      }
+
+      // Fetch logs (joined with volontari)
+      const { data: logsData } = await db
+        .from('presenze')
+        .select(`
+          id,
+          tipo,
+          timestamp,
+          volontari (
+            nome,
+            cognome
+          )
+        `)
+        .order('timestamp', { ascending: false })
+        .limit(5);
+
+      if (logsData) {
+        setLogs(logsData);
       }
     }
 
-    fetchStats();
+    fetchData();
+
+    // Set up real-time subscription for updates
+    const channel = db.channel('public:presenze')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'presenze' }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      db.removeChannel(channel);
+    };
   }, []);
 
   return (
@@ -49,7 +81,7 @@ export default function Home({ onScannerOpen }) {
             <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>qr_code_scanner</span>
           </div>
           <span className="text-4xl font-black text-slate-800 leading-none">{scansioni}</span>
-          <span className="text-[8px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Scansioni</span>
+          <span className="text-[8px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Scansioni Oggi</span>
         </div>
 
         {/* Shard 2 — In Sede */}
@@ -64,7 +96,7 @@ export default function Home({ onScannerOpen }) {
       </div>
 
       {/* Quick Actions */}
-      <div className="space-y-4">
+      <div className="space-y-4 mb-8">
         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] pl-2" style={{ color: 'rgba(74,142,170,0.6)' }}>
           Azioni Rapide
         </h2>
@@ -104,6 +136,41 @@ export default function Home({ onScannerOpen }) {
               <span className="material-symbols-outlined text-slate-300" style={{ fontSize: 20 }}>chevron_right</span>
             </div>
           </button>
+        </div>
+      </div>
+
+      {/* Activity Log */}
+      <div className="space-y-4 animate-reveal" style={{ animationDelay: '0.5s' }}>
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] pl-2" style={{ color: 'rgba(74,142,170,0.6)' }}>
+          Log Attività
+        </h2>
+
+        <div className="space-y-2">
+          {logs.length === 0 ? (
+            <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-6 text-center text-slate-400 text-xs italic">
+              Nessuna attività registrata recentemente.
+            </div>
+          ) : (
+            logs.map((log) => (
+              <div key={log.id} className="liquid-glass glass-gradient-bg rounded-[2rem] p-4 flex items-center space-x-4 border-l-4"
+                style={{ borderLeftColor: log.tipo === 'entrata' ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)' }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                  style={{ background: log.tipo === 'entrata' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: log.tipo === 'entrata' ? '#22c55e' : '#ef4444' }}>
+                    {log.tipo === 'entrata' ? 'login' : 'logout'}
+                  </span>
+                </div>
+                <div className="flex-grow">
+                  <p className="font-bold text-slate-800 text-sm leading-tight">
+                    {log.volontari?.nome} {log.volontari?.cognome}
+                  </p>
+                  <p className="text-[10px] text-slate-500 uppercase font-black tracking-wider">
+                    {log.tipo} • {new Date(log.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </>
