@@ -27,7 +27,12 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
     setScanState('idle');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 } }
+        video: { 
+          facingMode: 'environment', 
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          frameRate: { ideal: 15, max: 30 }
+        }
       });
       streamRef.current = stream;
       if (videoRef.current) videoRef.current.srcObject = stream;
