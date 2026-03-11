@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { LogIn, LogOut } from 'lucide-react';
-import jsQR from 'jsqr';
 import { db } from '../utils/supabase';
 
 export default function Scanner({ active, showFeedback, hideFeedback }) {
-  const [tipoCorrente, setTipoCorrente] = useState('entrata');
+  const [tipo, setTipo] = useState('entrata');
   const [scanStatus, setScanStatus] = useState('IN ATTESA DEL BERSAGLIO');
-  const [scanColor, setScanColor] = useState('var(--sea-accent)');
+  const [scanState, setScanState] = useState('idle'); // idle | scanning | success | error
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -24,30 +22,25 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
 
   const startCamera = async () => {
     if (streamRef.current) return;
-    setScanStatus('INIZIALIZZAZIONE OTTICHE...');
-    setScanColor('var(--sea-accent)');
-
+    setScanStatus('INIZIALIZZAZIONE CAMERA...');
+    setScanState('idle');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 1280 } }
       });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (err) {
-      setScanStatus('ACCESSO OTTICHE NEGATO');
-      setScanColor('var(--moby-red)');
-      showFeedback('error', 'Fotocamera inaccessibile', 'Fornisci i permessi necessari al browser.');
+      if (videoRef.current) videoRef.current.srcObject = stream;
+    } catch {
+      setScanStatus('ACCESSO CAMERA NEGATO');
+      setScanState('error');
+      showFeedback('error', 'Fotocamera inaccessibile', 'Concedi il permesso nel browser.');
     }
   };
 
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
-      setScanStatus('SISTEMA DISATTIVATO');
-      setScanColor('var(--text-muted)');
     }
   };
 
@@ -55,10 +48,10 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
-
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     setScanStatus('IN ATTESA DEL BERSAGLIO');
+    setScanState('idle');
 
     const tick = () => {
       if (!streamRef.current || !active) return;
@@ -66,12 +59,10 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imgData.data, imgData.width, imgData.height, {
-          inversionAttempts: 'dontInvert'
+        import('jsqr').then(({ default: jsQR }) => {
+          const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' });
+          if (code) onQRDetected(code.data);
         });
-        if (code) {
-          onQRDetected(code.data);
-        }
       }
       requestAnimationFrame(tick);
     };
@@ -80,95 +71,115 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
 
   const onQRDetected = async (code) => {
     if (cooldownRef.current || code === ultimoScanRef.current) return;
-    
     cooldownRef.current = true;
     ultimoScanRef.current = code;
-
-    setScanColor('var(--sea-accent)');
     setScanStatus('SCANSIONE IN CORSO...');
+    setScanState('scanning');
     showFeedback('loading', 'Decodifica in corso', 'Attendi...');
 
     try {
-      const { data: vol, error: ve } = await db
-        .from('volontari')
-        .select('*')
-        .eq('codice_qr', code)
-        .single();
-
-      hideFeedback(); // rimuovi caricamento
+      const { data: vol, error: ve } = await db.from('volontari').select('*').eq('codice_qr', code).single();
+      hideFeedback();
 
       if (ve || !vol) {
-        showFeedback('error', 'QR Non Valido', 'Codice non riconosciuto o corrotto.');
-        setScanColor('var(--moby-red)');
+        showFeedback('error', 'QR Non Valido', 'Codice non riconosciuto.');
         setScanStatus('SCANSIONE FALLITA');
+        setScanState('error');
       } else {
         const ts = new Date().toISOString();
         const nome = `${vol.nome} ${vol.cognome}`;
-
-        await db.from('presenze').insert({
-          volontario_id: vol.id,
-          tipo: tipoCorrente,
-          timestamp: ts
-        });
-
-        // Qui invocheremmo anche addLogItem dal parent (App.jsx), ignorato per semplicitá 
-        // in questa riscrittura o gestibile via context/prop callbacks.
-        
-        showFeedback('success', 'Successo', `${nome} - ${tipoCorrente.toUpperCase()} registrata.`);
-        setScanColor('var(--moby-green)');
-        setScanStatus('BERSAGLIO ACQUISITO');
+        await db.from('presenze').insert({ volontario_id: vol.id, tipo, timestamp: ts });
+        showFeedback('success', 'Successo!', `${nome} — ${tipo.toUpperCase()} registrata.`);
+        setScanStatus('BERSAGLIO ACQUISITO ✓');
+        setScanState('success');
       }
-    } catch (err) {
+    } catch {
       hideFeedback();
       showFeedback('error', 'Errore DB', 'Controlla la connessione.');
-      setScanColor('var(--moby-red)');
       setScanStatus('ERRORE DI RETE');
+      setScanState('error');
     }
 
-    // Reset cooldown after 4s
     setTimeout(() => {
       cooldownRef.current = false;
       ultimoScanRef.current = null;
-      setScanColor('var(--sea-accent)');
-      if (streamRef.current && active) {
-        setScanStatus('IN ATTESA DEL BERSAGLIO');
-      }
+      setScanState('idle');
+      if (streamRef.current && active) setScanStatus('IN ATTESA DEL BERSAGLIO');
     }, 4000);
   };
 
+  const statusColor = {
+    idle: 'text-slate-500',
+    scanning: 'text-primary',
+    success: 'text-emerald-500',
+    error: 'text-rose-500',
+  }[scanState];
+
+  const frameColor = {
+    idle: 'border-white/40',
+    scanning: 'border-primary/60',
+    success: 'border-emerald-400/80',
+    error: 'border-rose-400/80',
+  }[scanState];
+
   return (
-    <div className="scanner-view-inner">
-      <div className="scanner-status" style={{ color: scanColor }}>
+    <div className="flex flex-col items-center space-y-6">
+      {/* Page heading */}
+      <div className="w-full pl-2 animate-reveal">
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(74,142,170,0.6)' }}>
+          QR Scanner
+        </h2>
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
+          Registra<br /><span style={{ color: 'rgba(74,142,170,0.8)' }}>Presenza</span>
+        </h1>
+      </div>
+
+      {/* Status badge */}
+      <div className={`text-[10px] font-black uppercase tracking-widest ${statusColor} transition-colors`}>
         {scanStatus}
       </div>
 
-      <div className="scanner-frame-wrapper">
-        <div className="scanner-video-container">
-          <video 
-            ref={videoRef} 
-            autoPlay 
-            muted 
-            playsInline 
-            onLoadedMetadata={handleVideoLoad} 
-            id="video"
-          />
-          <canvas ref={canvasRef} id="canvas" style={{ display: 'none' }} />
-          {active && <div className="scan-line" id="scanLine" style={{ display: 'block' }}></div>}
-        </div>
+      {/* Video frame */}
+      <div className={`liquid-glass ${frameColor} border-2 rounded-[2rem] overflow-hidden relative w-full max-w-sm aspect-square transition-all`}>
+        <video
+          ref={videoRef}
+          autoPlay muted playsInline
+          onLoadedMetadata={handleVideoLoad}
+          className="w-full h-full object-cover"
+        />
+        <canvas ref={canvasRef} className="hidden" />
+        {/* Corner decorations */}
+        <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-primary/60 rounded-tl-xl" />
+        <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-primary/60 rounded-tr-xl" />
+        <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-primary/60 rounded-bl-xl" />
+        <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-primary/60 rounded-br-xl" />
+        {/* Scan line */}
+        {active && scanState === 'idle' && <div className="scan-anim-line" />}
       </div>
 
-      <div className="toggle-container">
-        <button 
-          className={`toggle-btn ${tipoCorrente === 'entrata' ? 'active entrata' : ''}`}
-          onClick={() => setTipoCorrente('entrata')}
+      {/* Entrata / Uscita toggle */}
+      <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-1.5 flex space-x-1 w-full max-w-sm">
+        <button
+          onClick={() => setTipo('entrata')}
+          className={`flex-1 py-3 rounded-[1.5rem] flex items-center justify-center space-x-2 font-black text-sm uppercase tracking-wider transition-all ${
+            tipo === 'entrata'
+              ? 'bg-emerald-400/80 text-white shadow-md'
+              : 'text-slate-500 hover:bg-white/30'
+          }`}
         >
-          <LogIn size={20} /> ENTRATA
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>login</span>
+          <span>Entrata</span>
         </button>
-        <button 
-          className={`toggle-btn ${tipoCorrente === 'uscita' ? 'active uscita' : ''}`}
-          onClick={() => setTipoCorrente('uscita')}
+        <button
+          onClick={() => setTipo('uscita')}
+          className={`flex-1 py-3 rounded-[1.5rem] flex items-center justify-center space-x-2 font-black text-sm uppercase tracking-wider transition-all ${
+            tipo === 'uscita'
+              ? 'bg-rose-400/80 text-white shadow-md'
+              : 'text-slate-500 hover:bg-white/30'
+          }`}
         >
-          <LogOut size={20} /> USCITA
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
+          <span>Uscita</span>
         </button>
       </div>
     </div>
