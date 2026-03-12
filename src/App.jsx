@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Home from './components/Home';
 import Scanner from './components/Scanner';
 import Staff from './components/Staff';
-import Events from './components/Events';
+import Report from './components/Report';
 import Menu from './components/Menu';
 import FeedbackOverlay from './components/FeedbackOverlay';
 import './index.css';
@@ -52,7 +52,7 @@ export default function App() {
       <main className="relative z-10 flex-grow pt-36 pb-32 px-6 max-w-md mx-auto w-full">
         {view === 'home' && <Home onScannerOpen={() => setView('scanner')} />}
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
-        {view === 'events' && <Events />}
+        {view === 'report' && <Report />}
         {view === 'staff' && <Staff />}
         {view === 'menu' && <Menu />}
       </main>
@@ -61,7 +61,7 @@ export default function App() {
       <nav className="fixed bottom-6 left-6 right-6 z-50">
         <div className="liquid-glass glass-gradient-bg rounded-[2.5rem] px-8 py-3 flex justify-between items-center max-w-md mx-auto">
           <NavBtn icon="dashboard" label="Home" active={view === 'home'} fill onClick={() => setView('home')} />
-          <NavBtn icon="calendar_month" label="Eventi" active={view === 'events'} onClick={() => setView('events')} />
+          <NavBtn icon="analytics" label="Report" active={view === 'report'} onClick={() => setView('report')} />
 
           {/* Center FAB */}
           <div className="relative -top-8">

@@ -95,49 +95,6 @@ export default function Home({ onScannerOpen }) {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="space-y-4 mb-8">
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] pl-2" style={{ color: 'rgba(74,142,170,0.6)' }}>
-          Azioni Rapide
-        </h2>
-
-        <div className="relative space-y-3">
-          {/* Primary CTA — Scanner */}
-          <button
-            onClick={onScannerOpen}
-            className="w-full liquid-btn text-white p-5 flex items-center space-x-5 active:scale-95 transition-all relative overflow-hidden group animate-glow"
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-white/5 to-transparent pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-[1500ms]" />
-            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 border border-white/30 shadow-inner"
-              style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 24, fontWeight: 700 }}>qr_code_scanner</span>
-            </div>
-            <div className="text-left relative z-10">
-              <p className="font-black text-lg leading-tight tracking-tight">Registra Presenza</p>
-              <p className="text-white/80 text-[10px] font-bold uppercase tracking-[0.15em]">Nuovo partecipante</p>
-            </div>
-            <div className="ml-auto pr-2 relative z-10">
-              <span className="material-symbols-outlined opacity-60 group-hover:translate-x-1 transition-transform" style={{ fontSize: 20 }}>arrow_forward_ios</span>
-            </div>
-          </button>
-
-          {/* Secondary CTA — Report */}
-          <button className="w-full liquid-glass glass-gradient-bg p-4 rounded-[3rem] flex items-center space-x-5 active:scale-95 transition-all animate-reveal hover:-translate-y-1"
-            style={{ animationDelay: '0.4s' }}>
-            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(74,142,170,0.1)' }}>
-              <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>analytics</span>
-            </div>
-            <div className="text-left">
-              <p className="font-extrabold text-lg leading-tight text-slate-800">Invia Report</p>
-              <p className="text-slate-500 text-[10px] font-medium uppercase tracking-wider">Esporta CSV/PDF</p>
-            </div>
-            <div className="ml-auto pr-2">
-              <span className="material-symbols-outlined text-slate-300" style={{ fontSize: 20 }}>chevron_right</span>
-            </div>
-          </button>
-        </div>
-      </div>
 
       {/* Activity Log */}
       <div className="space-y-4 animate-reveal" style={{ animationDelay: '0.5s' }}>
