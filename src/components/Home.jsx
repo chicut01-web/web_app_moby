@@ -96,40 +96,7 @@ export default function Home({ onScannerOpen }) {
       </div>
 
 
-      {/* Activity Log */}
-      <div className="space-y-4 animate-reveal" style={{ animationDelay: '0.5s' }}>
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] pl-2" style={{ color: 'rgba(74,142,170,0.6)' }}>
-          Log Attività
-        </h2>
 
-        <div className="space-y-2">
-          {logs.length === 0 ? (
-            <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-6 text-center text-slate-400 text-xs italic">
-              Nessuna attività registrata recentemente.
-            </div>
-          ) : (
-            logs.map((log) => (
-              <div key={log.id} className="liquid-glass glass-gradient-bg rounded-[2rem] p-4 flex items-center space-x-4 border-l-4"
-                style={{ borderLeftColor: log.tipo === 'entrata' ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)' }}>
-                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: log.tipo === 'entrata' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: log.tipo === 'entrata' ? '#22c55e' : '#ef4444' }}>
-                    {log.tipo === 'entrata' ? 'login' : 'logout'}
-                  </span>
-                </div>
-                <div className="flex-grow">
-                  <p className="font-bold text-slate-800 text-sm leading-tight">
-                    {log.volontari?.nome} {log.volontari?.cognome}
-                  </p>
-                  <p className="text-[10px] text-slate-500 uppercase font-black tracking-wider">
-                    {log.tipo} • {new Date(log.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
     </>
   );
 }

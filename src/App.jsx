@@ -49,7 +49,7 @@ export default function App() {
       </header>
 
       {/* Main content area */}
-      <main className="relative z-10 flex-grow pt-36 pb-32 px-6 max-w-md mx-auto w-full">
+      <main className="relative z-10 flex-grow pt-28 pb-24 px-6 max-w-md mx-auto w-full">
         {view === 'home' && <Home onScannerOpen={() => setView('scanner')} />}
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
         {view === 'report' && <Report />}
@@ -73,7 +73,7 @@ export default function App() {
             </button>
           </div>
 
-          <NavBtn icon="group" label="Staff" active={view === 'staff'} onClick={() => setView('staff')} />
+          <NavBtn icon="search" label="Cerca" active={view === 'staff'} onClick={() => setView('staff')} />
           <NavBtn icon="settings" label="Menu" active={view === 'menu'} onClick={() => setView('menu')} />
         </div>
       </nav>
