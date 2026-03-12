@@ -77,8 +77,8 @@ export default function Home({ onScannerOpen }) {
   return (
     <>
       {/* Page header */}
-      <div className="mb-6 pl-2 animate-reveal" style={{ animationDelay: '0.1s' }}>
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(74,142,170,0.6)' }}>
+      <div className="mb-4 pl-2 animate-reveal" style={{ animationDelay: '0.1s' }}>
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-0.5" style={{ color: 'rgba(74,142,170,0.6)' }}>
           Live Intelligence
         </h2>
         <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
@@ -88,31 +88,31 @@ export default function Home({ onScannerOpen }) {
       </div>
 
       {/* Stats shards */}
-      <div className="relative h-[200px] mb-8 animate-reveal" style={{ animationDelay: '0.2s' }}>
+      <div className="relative h-[150px] mb-5 animate-reveal" style={{ animationDelay: '0.2s' }}>
         {/* Shard 1 — Scansioni */}
-        <div className="shard-1 liquid-glass glass-gradient-bg animate-float absolute top-0 left-0 flex flex-col items-center justify-center p-6 z-20"
-          style={{ width: '58%', height: 140 }}>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center mb-1" style={{ background: 'rgba(74,142,170,0.1)' }}>
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>qr_code_scanner</span>
+        <div className="shard-1 liquid-glass glass-gradient-bg animate-float absolute top-0 left-0 flex flex-col items-center justify-center p-4 z-20"
+          style={{ width: '56%', height: 120 }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ background: 'rgba(74,142,170,0.1)' }}>
+            <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>qr_code_scanner</span>
           </div>
           <span className="text-4xl font-black text-slate-800 leading-none">{scansioni}</span>
           <span className="text-[8px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Scansioni Oggi</span>
         </div>
 
         {/* Shard 2 — In Sede */}
-        <div className="shard-2 liquid-glass animate-float-slow absolute flex flex-col items-center justify-center p-6 z-10"
-          style={{ width: '53%', height: 130, top: 32, right: 0, background: 'rgba(255,255,255,0.3)', animationDelay: '-1.5s' }}>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center mb-1" style={{ background: 'rgba(74,142,170,0.1)' }}>
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: 20 }}>group</span>
+        <div className="shard-2 liquid-glass animate-float-slow absolute flex flex-col items-center justify-center p-4 z-10"
+          style={{ width: '52%', height: 110, top: 24, right: 0, background: 'rgba(255,255,255,0.3)', animationDelay: '-1.5s' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ background: 'rgba(74,142,170,0.1)' }}>
+            <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>group</span>
           </div>
           <span className="text-3xl font-black text-slate-800 leading-none">{inSede}</span>
-          <span className="text-[8px] font-bold text-slate-500 mt-2 uppercase tracking-widest">In Sede</span>
+          <span className="text-[8px] font-bold text-slate-500 mt-1 uppercase tracking-widest">In Sede</span>
         </div>
       </div>
 
       {/* Trend Chart */}
       <div className="animate-reveal" style={{ animationDelay: '0.4s' }}>
-        <div className="flex items-center justify-between mb-4 pl-2">
+        <div className="flex items-center justify-between mb-2 pl-2">
           <h2 className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: 'rgba(74,142,170,0.6)' }}>
             Flusso Presenze
           </h2>
@@ -122,12 +122,12 @@ export default function Home({ onScannerOpen }) {
           </span>
         </div>
 
-        <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-4 pt-6 h-[220px] shadow-sm relative overflow-hidden">
+        <div className="liquid-glass glass-gradient-bg rounded-[2rem] p-3 pt-5 h-[170px] shadow-sm relative overflow-hidden">
           {/* Subtle background glow for the chart */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
           
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: -10 }}>
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#4A8EAA" stopOpacity={0.4}/>
