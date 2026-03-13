@@ -151,3 +151,15 @@ html, body {
 .material-symbols-outlined.fill-1 {
   font-variation-settings: 'FILL' 1;
 }
+
+/* Recharts Fixes — Remove ugly black borders/outlines on mobile tap */
+.recharts-responsive-container,
+.recharts-wrapper,
+.recharts-surface,
+.recharts-cartesian-axis,
+.recharts-cartesian-axis-tick,
+.recharts-tooltip-cursor {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none;
+}
