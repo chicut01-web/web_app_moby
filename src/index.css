@@ -153,13 +153,12 @@ html, body {
 }
 
 /* Recharts Fixes — Remove ugly black borders/outlines on mobile tap */
-.recharts-responsive-container,
-.recharts-wrapper,
-.recharts-surface,
-.recharts-cartesian-axis,
-.recharts-cartesian-axis-tick,
-.recharts-tooltip-cursor {
+.recharts-wrapper, 
+.recharts-wrapper * {
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
-  user-select: none;
 }
+.recharts-surface {
+  outline: none !important;
+}
+

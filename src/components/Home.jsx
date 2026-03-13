@@ -126,31 +126,36 @@ export default function Home({ onScannerOpen }) {
           {/* Subtle background glow for the chart */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
           
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: -10 }}>
+          <ResponsiveContainer width="100%" height="100%" style={{ outline: 'none' }}>
+            <AreaChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }} style={{ outline: 'none' }}>
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4A8EAA" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#4A8EAA" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#4A8EAA" stopOpacity={0.6}/>
+                  <stop offset="80%" stopColor="#4A8EAA" stopOpacity={0}/>
                 </linearGradient>
               </defs>
               <XAxis 
                 dataKey="time" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 600 }}
-                minTickGap={15}
+                tick={{ fontSize: 9, fill: '#64748b', fontWeight: 700 }}
+                minTickGap={20}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(74,142,170,0.2)', strokeWidth: 2, strokeDasharray: '4 4' }} />
+              <Tooltip 
+                content={<CustomTooltip />} 
+                cursor={{ stroke: 'rgba(74,142,170,0.3)', strokeWidth: 2, strokeDasharray: '4 4' }} 
+              />
               <Area 
-                type="monotone" 
+                type="natural" 
                 dataKey="count" 
                 stroke="#4A8EAA" 
-                strokeWidth={3}
+                strokeWidth={4}
                 fillOpacity={1} 
                 fill="url(#colorCount)" 
-                animationDuration={1500}
+                animationDuration={2000}
                 animationEasing="ease-out"
+                activeDot={{ r: 6, fill: '#4A8EAA', stroke: '#fff', strokeWidth: 3, style: { filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.3))' } }}
+                style={{ filter: 'drop-shadow(0px 6px 8px rgba(74, 142, 170, 0.25))' }}
               />
             </AreaChart>
           </ResponsiveContainer>

@@ -49,7 +49,7 @@ export default function App() {
       </header>
 
       {/* Main content area */}
-      <main className="relative z-10 flex-grow pt-20 pb-32 px-5 max-w-md mx-auto w-full flex flex-col">
+      <main className="relative z-10 flex-grow pt-28 pb-32 px-5 max-w-md mx-auto w-full flex flex-col">
         {view === 'home' && <Home onScannerOpen={() => setView('scanner')} />}
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
         {view === 'report' && <Report />}
