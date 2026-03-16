@@ -158,7 +158,7 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
       )}
 
       {/* Video frame */}
-      <div className={`liquid-glass ${frameColor} border-2 rounded-[2rem] overflow-hidden relative w-full max-w-sm aspect-[4/3] transition-all`}>
+      <div className={`liquid-glass ${frameColor} border-2 rounded-[2rem] overflow-hidden relative w-full max-w-sm aspect-square transition-all`}>
         <video
           ref={videoRef}
           autoPlay muted playsInline
