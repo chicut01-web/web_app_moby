@@ -4,7 +4,7 @@ import { db } from '../utils/supabase';
 
 export default function Scanner({ active, showFeedback, hideFeedback }) {
   const [tipo, setTipo] = useState('entrata');
-  const [scanStatus, setScanStatus] = useState('IN ATTESA DEL BERSAGLIO');
+  const [scanStatus, setScanStatus] = useState('');
   const [scanState, setScanState] = useState('idle'); // idle | scanning | success | error
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -62,7 +62,7 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
     canvas.width = video.videoWidth * scale;
     canvas.height = video.videoHeight * scale;
     
-    setScanStatus('IN ATTESA DEL BERSAGLIO');
+    setScanStatus('');
     setScanState('idle');
 
     let lastScan = 0;
@@ -120,7 +120,7 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
       cooldownRef.current = false;
       ultimoScanRef.current = null;
       setScanState('idle');
-      if (streamRef.current && active) setScanStatus('IN ATTESA DEL BERSAGLIO');
+      if (streamRef.current && active) setScanStatus('');
     }, 4000);
   };
 
@@ -139,7 +139,7 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
   }[scanState];
 
   return (
-    <div className="flex flex-col items-center space-y-6">
+    <div className="flex flex-col items-center space-y-3 pb-8">
       {/* Page heading */}
       <div className="w-full pl-2 animate-reveal">
         <h2 className="text-[10px] font-black uppercase tracking-[0.3em] mb-1" style={{ color: 'rgba(74,142,170,0.6)' }}>
@@ -151,12 +151,14 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
       </div>
 
       {/* Status badge */}
-      <div className={`text-[10px] font-black uppercase tracking-widest ${statusColor} transition-colors`}>
-        {scanStatus}
-      </div>
+      {scanStatus && (
+        <div className={`text-[10px] font-black uppercase tracking-widest ${statusColor} transition-colors`}>
+          {scanStatus}
+        </div>
+      )}
 
       {/* Video frame */}
-      <div className={`liquid-glass ${frameColor} border-2 rounded-[2rem] overflow-hidden relative w-full max-w-sm aspect-square transition-all`}>
+      <div className={`liquid-glass ${frameColor} border-2 rounded-[2rem] overflow-hidden relative w-full max-w-sm aspect-[4/3] transition-all`}>
         <video
           ref={videoRef}
           autoPlay muted playsInline
