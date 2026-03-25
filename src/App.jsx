@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './components/Home';
 import Scanner from './components/Scanner';
 import Staff from './components/Staff';
 import Report from './components/Report';
 import Menu from './components/Menu';
+import Login from './components/Login';
 import FeedbackOverlay from './components/FeedbackOverlay';
+import { db } from './utils/supabase';
 import './index.css';
 
 export default function App() {
   const [view, setView] = useState('home');
+  const [user, setUser] = useState(null);
   const [feedback, setFeedback] = useState({ show: false, type: '', title: '', sub: '' });
+
+  useEffect(() => {
+    // Check active session
+    db.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = db.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const showFeedback = (type, title, sub) => {
     setFeedback({ show: true, type, title, sub });
@@ -52,9 +69,9 @@ export default function App() {
       <main className="relative z-10 flex-grow pt-28 pb-32 px-5 max-w-md mx-auto w-full flex flex-col">
         {view === 'home' && <Home onScannerOpen={() => setView('scanner')} />}
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
-        {view === 'report' && <Report />}
-        {view === 'staff' && <Staff />}
-        {view === 'menu' && <Menu />}
+        {view === 'report' && (user ? <Report /> : <Login onLoginSuccess={() => setView('report')} />)}
+        {view === 'staff' && (user ? <Staff /> : <Login onLoginSuccess={() => setView('staff')} />)}
+        {view === 'menu' && (user ? <Menu /> : <Login onLoginSuccess={() => setView('menu')} />)}
       </main>
 
       {/* Bottom Navigation */}

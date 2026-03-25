@@ -1,4 +1,5 @@
 import React from 'react';
+import { db } from '../utils/supabase';
 
 export default function Menu() {
   const sections = [
@@ -63,7 +64,10 @@ export default function Menu() {
 
       {/* Logout button */}
       <div className="pt-4 animate-reveal" style={{ animationDelay: '0.4s' }}>
-        <button className="w-full liquid-glass rounded-[2rem] p-5 flex items-center justify-center space-x-3 text-rose-500 font-black border-rose-100 hover:bg-rose-50/50 transition-all active:scale-95">
+        <button 
+          onClick={() => db.auth.signOut()}
+          className="w-full liquid-glass rounded-[2rem] p-5 flex items-center justify-center space-x-3 text-rose-500 font-black border-rose-100 hover:bg-rose-50/50 transition-all active:scale-95"
+        >
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>logout</span>
           <span>Logout</span>
         </button>
