@@ -12,17 +12,20 @@ import './index.css';
 export default function App() {
   const [view, setView] = useState('home');
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({ show: false, type: '', title: '', sub: '' });
 
   useEffect(() => {
     // Check active session
     db.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = db.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -36,6 +39,33 @@ export default function App() {
   };
 
   const hideFeedback = () => setFeedback(f => ({ ...f, show: false }));
+
+  if (loading) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center text-primary">
+        <span className="material-symbols-outlined animate-spin" style={{ fontSize: 40 }}>sync</span>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-dvh flex flex-col relative text-slate-800">
+        <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'rgba(74,142,170,0.18)', animationDuration: '14s' }} />
+        <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'rgba(220,235,242,0.5)', animationDelay: '-4s' }} />
+        
+        <main className="relative z-10 flex-grow pt-10 pb-10 px-5 max-w-md mx-auto w-full flex flex-col items-center justify-center">
+          <img
+            alt="Moby Dick Logo"
+            className="h-16 w-auto mb-8 animate-reveal"
+            src="/logo/logo_mobydickets-1-3.png"
+            onError={e => { e.target.style.display = 'none'; }}
+          />
+          <Login />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh flex flex-col relative text-slate-800">
@@ -69,9 +99,9 @@ export default function App() {
       <main className="relative z-10 flex-grow pt-28 pb-32 px-5 max-w-md mx-auto w-full flex flex-col">
         {view === 'home' && <Home onScannerOpen={() => setView('scanner')} />}
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
-        {view === 'report' && (user ? <Report /> : <Login onLoginSuccess={() => setView('report')} />)}
-        {view === 'staff' && (user ? <Staff /> : <Login onLoginSuccess={() => setView('staff')} />)}
-        {view === 'menu' && (user ? <Menu /> : <Login onLoginSuccess={() => setView('menu')} />)}
+        {view === 'report' && <Report />}
+        {view === 'staff' && <Staff />}
+        {view === 'menu' && <Menu />}
       </main>
 
       {/* Bottom Navigation */}
