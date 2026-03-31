@@ -51,8 +51,8 @@ export default function App() {
   if (!user) {
     return (
       <div className="min-h-dvh flex flex-col relative text-slate-800">
-        <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'rgba(74,142,170,0.18)', animationDuration: '14s' }} />
-        <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'rgba(220,235,242,0.5)', animationDelay: '-4s' }} />
+      <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'radial-gradient(circle, rgba(74,142,170,0.2) 0%, rgba(74,142,170,0) 70%)', animationDuration: '14s' }} />
+        <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'radial-gradient(circle, rgba(160,200,220,0.3) 0%, rgba(160,200,220,0) 70%)', animationDelay: '-4s' }} />
         
         <main className="relative z-10 flex-grow pt-10 pb-10 px-5 max-w-md mx-auto w-full flex flex-col items-center justify-center">
           <img
@@ -69,13 +69,13 @@ export default function App() {
 
   return (
     <div className="min-h-dvh flex flex-col relative text-slate-800">
-      {/* Animated mesh blobs — keep to 2 for performance */}
-      <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'rgba(74,142,170,0.18)', animationDuration: '14s' }} />
-      <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'rgba(220,235,242,0.5)', animationDelay: '-4s' }} />
+      {/* Animated mesh blobs */}
+      <div className="mesh-blob animate-float-slow" style={{ width: 500, height: 500, top: '5%', right: '0%', background: 'radial-gradient(circle, rgba(74,142,170,0.2) 0%, rgba(74,142,170,0) 70%)', animationDuration: '14s' }} />
+      <div className="mesh-blob animate-float" style={{ width: 380, height: 380, bottom: '10%', left: '-8%', background: 'radial-gradient(circle, rgba(160,200,220,0.4) 0%, rgba(160,200,220,0) 70%)', animationDelay: '-4s' }} />
 
       {/* Header */}
-      <header className="fixed top-4 left-4 right-4 z-50 animate-reveal">
-        <div className="liquid-glass glass-gradient-bg rounded-[2rem] px-5 py-3 flex items-center justify-between">
+      <header className="fixed top-4 left-0 right-0 z-50 px-4">
+        <div className="liquid-glass glass-gradient-bg rounded-[2rem] px-5 py-3 flex items-center justify-between max-w-md mx-auto">
           <div className="flex items-center">
             <img
               alt="Moby Dick Logo"

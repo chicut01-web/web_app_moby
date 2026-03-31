@@ -11,6 +11,11 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
   const streamRef = useRef(null);
   const cooldownRef = useRef(false);
   const ultimoScanRef = useRef(null);
+  const onQRDetectedRef = useRef(null);
+
+  useEffect(() => {
+    onQRDetectedRef.current = onQRDetected;
+  });
 
   useEffect(() => {
     if (active) {
@@ -78,7 +83,7 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
         
         // Pass the much smaller image array to jsQR
         const code = jsQR(imgData.data, imgData.width, imgData.height, { inversionAttempts: 'dontInvert' });
-        if (code) onQRDetected(code.data);
+        if (code && onQRDetectedRef.current) onQRDetectedRef.current(code.data);
       }
       requestAnimationFrame(tick);
     };
@@ -102,12 +107,45 @@ export default function Scanner({ active, showFeedback, hideFeedback }) {
         setScanStatus('SCANSIONE FALLITA');
         setScanState('error');
       } else {
-        const ts = new Date().toISOString();
         const nome = `${vol.nome} ${vol.cognome}`;
-        await db.from('presenze').insert({ volontario_id: vol.id, tipo, timestamp: ts });
-        showFeedback('success', 'Successo!', `${nome} — ${tipo.toUpperCase()} registrata.`);
-        setScanStatus('BERSAGLIO ACQUISITO ✓');
-        setScanState('success');
+        
+        // Trova l'inizio della giornata odierna
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        // Controlla presenze esistenti per questo volontario oggi
+        const { data: presenzeOggi } = await db
+          .from('presenze')
+          .select('tipo')
+          .eq('volontario_id', vol.id)
+          .gte('timestamp', startOfDay.toISOString());
+
+        const hasEntrata = presenzeOggi && presenzeOggi.some(p => p.tipo === 'entrata');
+        const hasUscita = presenzeOggi && presenzeOggi.some(p => p.tipo === 'uscita');
+
+        if (tipo === 'entrata' && hasEntrata) {
+          showFeedback('error', 'Già Registrato', `${nome} ha già un'ENTRATA oggi.`);
+          setScanStatus('DUPLICATO VIETATO');
+          setScanState('error');
+        } else if (tipo === 'uscita' && hasUscita) {
+          showFeedback('error', 'Già Registrato', `${nome} ha già un'USCITA oggi.`);
+          setScanStatus('DUPLICATO VIETATO');
+          setScanState('error');
+        } else if (tipo === 'uscita' && !hasEntrata) {
+          showFeedback('error', 'Manca Entrata', `${nome} deve prima fare l'ENTRATA.`);
+          setScanStatus('USCITA NON VALIDA');
+          setScanState('error');
+        } else {
+          // Tutto regolare, registriamo
+          const ts = new Date().toISOString();
+          const { error: insertError } = await db.from('presenze').insert({ volontario_id: vol.id, tipo, timestamp: ts });
+          
+          if (insertError) throw new Error(insertError.message);
+
+          showFeedback('success', 'Successo!', `${nome} — ${tipo.toUpperCase()} registrata.`);
+          setScanStatus('BERSAGLIO ACQUISITO ✓');
+          setScanState('success');
+        }
       }
     } catch {
       hideFeedback();
