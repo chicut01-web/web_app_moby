@@ -3,7 +3,8 @@ import { db } from '../utils/supabase';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Home({ onScannerOpen }) {
-  const [scansioni, setScansioni] = useState(0);
+  const [entrate, setEntrate] = useState(0);
+  const [uscite, setUscite] = useState(0);
   const [inSede, setInSede] = useState(0);
   const [chartData, setChartData] = useState([]);
 
@@ -21,10 +22,11 @@ export default function Home({ onScannerOpen }) {
         .order('timestamp', { ascending: true });
 
       if (presenzeData) {
-        setScansioni(presenzeData.length);
-        const entrate = presenzeData.filter(r => r.tipo === 'entrata').length;
-        const uscite = presenzeData.filter(r => r.tipo === 'uscita').length;
-        setInSede(Math.max(0, entrate - uscite));
+        const countEntrate = presenzeData.filter(r => r.tipo === 'entrata').length;
+        const countUscite = presenzeData.filter(r => r.tipo === 'uscita').length;
+        setEntrate(countEntrate);
+        setUscite(countUscite);
+        setInSede(Math.max(0, countEntrate - countUscite));
 
         // Group by hour for the chart
         const hourlyBuckets = Array.from({ length: 15 }, (_, i) => {
@@ -87,26 +89,35 @@ export default function Home({ onScannerOpen }) {
         </h1>
       </div>
 
-      {/* Stats shards */}
-      <div className="relative h-[150px] mb-5 animate-reveal" style={{ animationDelay: '0.2s' }}>
-        {/* Shard 1 — Scansioni */}
-        <div className="shard-1 liquid-glass glass-gradient-bg animate-float absolute top-0 left-0 flex flex-col items-center justify-center p-4 z-20"
-          style={{ width: '56%', height: 120 }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ background: 'rgba(74,142,170,0.1)' }}>
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>qr_code_scanner</span>
-          </div>
-          <span className="text-4xl font-black text-slate-800 leading-none">{scansioni}</span>
-          <span className="text-[8px] font-bold text-slate-500 mt-2 uppercase tracking-widest">Scansioni Oggi</span>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 gap-3 mb-6 animate-reveal" style={{ animationDelay: '0.2s' }}>
+        {/* Stat 1 — Entrate */}
+        <div className="shard-1 liquid-glass glass-gradient-bg animate-float flex flex-col items-center justify-center p-3 h-[110px] relative overflow-hidden shadow-sm">
+          <div className="absolute top-0 right-[-10px] w-16 h-16 bg-emerald-400/20 rounded-full blur-xl"></div>
+          <span className="material-symbols-outlined text-emerald-500 mb-0.5" style={{ fontSize: 24 }}>login</span>
+          <span className="text-4xl font-black text-slate-800 leading-none">{entrate}</span>
+          <span className="text-[9px] font-bold text-slate-500 mt-1.5 uppercase tracking-widest text-center">Entrate<br/>Oggi</span>
         </div>
 
-        {/* Shard 2 — In Sede */}
-        <div className="shard-2 liquid-glass animate-float-slow absolute flex flex-col items-center justify-center p-4 z-10"
-          style={{ width: '52%', height: 110, top: 24, right: 0, background: 'rgba(255,255,255,0.3)', animationDelay: '-1.5s' }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center mb-1" style={{ background: 'rgba(74,142,170,0.1)' }}>
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>group</span>
+        {/* Stat 2 — Uscite */}
+        <div className="shard-2 liquid-glass flex flex-col items-center justify-center p-3 h-[110px] relative overflow-hidden shadow-sm" style={{ background: 'rgba(255,255,255,0.4)', animationDelay: '-1.5s' }}>
+          <div className="absolute top-0 left-[-10px] w-16 h-16 bg-rose-400/20 rounded-full blur-xl"></div>
+          <span className="material-symbols-outlined text-rose-500 mb-0.5" style={{ fontSize: 24 }}>logout</span>
+          <span className="text-4xl font-black text-slate-800 leading-none">{uscite}</span>
+          <span className="text-[9px] font-bold text-slate-500 mt-1.5 uppercase tracking-widest text-center">Uscite<br/>Oggi</span>
+        </div>
+
+        {/* Stat 3 — In Sede */}
+        <div className="col-span-2 liquid-glass glass-gradient-bg rounded-[2rem] p-5 flex flex-row items-center justify-between shadow-sm relative overflow-hidden">
+          <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Attualmente</span>
+            <span className="text-3xl font-black text-slate-800 leading-none">In Sede</span>
           </div>
-          <span className="text-3xl font-black text-slate-800 leading-none">{inSede}</span>
-          <span className="text-[8px] font-bold text-slate-500 mt-1 uppercase tracking-widest">In Sede</span>
+          <div className="flex items-center space-x-3 bg-white/50 px-4 py-2 rounded-3xl border border-white/60">
+            <span className="material-symbols-outlined text-primary" style={{ fontSize: 22 }}>group</span>
+            <span className="text-3xl font-black text-primary leading-none">{inSede}</span>
+          </div>
         </div>
       </div>
 
