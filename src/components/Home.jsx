@@ -27,8 +27,8 @@ export default function Home({ onScannerOpen }) {
         setUscite(countUscite);
         setInSede(Math.max(0, countEntrate - countUscite));
 
-        // Get the latest 5 entries for the live feed
-        const latest = [...presenzeData].reverse().slice(0, 5);
+        // Get the latest 3 entries for the live feed
+        const latest = [...presenzeData].reverse().slice(0, 3);
         setRecentLogs(latest);
       }
     }
