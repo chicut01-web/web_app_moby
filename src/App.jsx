@@ -75,7 +75,7 @@ export default function App() {
 
       {/* Header */}
       <header className="fixed top-4 left-0 right-0 z-50 px-4">
-        <div className="liquid-glass glass-gradient-bg rounded-[2rem] px-5 py-3 flex items-center justify-between max-w-md mx-auto">
+        <div className="bg-white rounded-[2rem] px-5 py-3 flex items-center justify-between max-w-md mx-auto shadow-md border border-slate-100">
           <div className="flex items-center">
             <img
               alt="Moby Dick Logo"
@@ -106,7 +106,7 @@ export default function App() {
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-6 left-6 right-6 z-50">
-        <div className="liquid-glass glass-gradient-bg rounded-[2.5rem] px-8 py-3 flex justify-between items-center max-w-md mx-auto">
+        <div className="bg-white rounded-[2.5rem] px-8 py-3 flex justify-between items-center max-w-md mx-auto shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100">
           <NavBtn icon="dashboard" label="Home" active={view === 'home'} fill onClick={() => setView('home')} />
           <NavBtn icon="analytics" label="Report" active={view === 'report'} onClick={() => setView('report')} />
 
