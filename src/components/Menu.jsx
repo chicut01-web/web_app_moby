@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../utils/supabase';
 
-export default function Menu() {
-  const [activeModal, setActiveModal] = useState(null);
+export default function Menu({ initialModal }) {
+  const [activeModal, setActiveModal] = useState(initialModal || null);
   const [userEmail, setUserEmail] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncSuccess, setSyncSuccess] = useState(false);
+
+  useEffect(() => {
+    setActiveModal(initialModal || null);
+  }, [initialModal]);
 
   useEffect(() => {
     db.auth.getUser().then(({ data: { user } }) => {

@@ -11,9 +11,15 @@ import './index.css';
 
 export default function App() {
   const [view, setView] = useState('home');
+  const [menuShortcut, setMenuShortcut] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({ show: false, type: '', title: '', sub: '' });
+
+  const goToMenu = (shortcut) => {
+    setMenuShortcut(shortcut);
+    setView('menu');
+  };
 
   useEffect(() => {
     // Check active session
@@ -85,12 +91,12 @@ export default function App() {
             />
           </div>
           <div className="flex items-center space-x-2">
-            <button className="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center text-slate-700 active:scale-90 transition-transform">
+            <button onClick={() => goToMenu('Notifiche')} className="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center text-slate-700 active:scale-90 transition-transform">
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>notifications</span>
             </button>
-            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-white/40">
+            <button onClick={() => goToMenu('Profilo Utente')} className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-white/40 active:scale-90 transition-transform">
               <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>account_circle</span>
-            </div>
+            </button>
           </div>
         </div>
       </header>
@@ -101,7 +107,7 @@ export default function App() {
         {view === 'scanner' && <Scanner active={true} showFeedback={showFeedback} hideFeedback={hideFeedback} />}
         {view === 'report' && <Report />}
         {view === 'staff' && <Staff />}
-        {view === 'menu' && <Menu />}
+        {view === 'menu' && <Menu initialModal={menuShortcut} />}
       </main>
 
       {/* Bottom Navigation */}
@@ -121,7 +127,7 @@ export default function App() {
           </div>
 
           <NavBtn icon="search" label="Cerca" active={view === 'staff'} onClick={() => setView('staff')} />
-          <NavBtn icon="settings" label="Menu" active={view === 'menu'} onClick={() => setView('menu')} />
+          <NavBtn icon="settings" label="Menu" active={view === 'menu'} onClick={() => goToMenu(null)} />
         </div>
       </nav>
 
