@@ -20,14 +20,13 @@ export default function Menu() {
       title: 'Account',
       items: [
         { icon: 'person', label: 'Profilo Utente' },
-        { icon: 'notifications', label: 'Notifiche', badge: '1' },
+        { icon: 'notifications', label: 'Notifiche' },
       ],
     },
     {
       title: 'Applicazione',
       items: [
         { icon: 'cloud_sync', label: 'Sincronizzazione DB' },
-        { icon: 'help', label: 'Supporto tecnico' },
         { icon: 'info', label: 'Informazioni Legali' },
       ],
     },
@@ -73,30 +72,11 @@ export default function Menu() {
         return (
           <div className="space-y-6 text-center animate-reveal pt-8">
             <div className="w-24 h-24 mx-auto rounded-full bg-slate-100 flex items-center justify-center border-4 border-white mb-2 shadow-sm">
-               <span className="material-symbols-outlined text-slate-300" style={{ fontSize: 48 }}>notifications_active</span>
+               <span className="material-symbols-outlined text-slate-300" style={{ fontSize: 48 }}>notifications_off</span>
             </div>
-            <h2 className="text-xl font-black text-slate-700">Nuovo aggiornamento visivo</h2>
-            <p className="text-sm text-slate-500 font-medium leading-relaxed px-4">Benvenuto nella nuova versione di Moby Dick! Abbiamo aggiornato le schede e il layout.</p>
+            <h2 className="text-xl font-black text-slate-700">Nessuna nuova notifica</h2>
+            <p className="text-sm text-slate-500 font-medium leading-relaxed px-4">Al momento non ci sono aggiornamenti di sistema.</p>
           </div>
-        );
-      case 'Supporto tecnico':
-        return (
-           <div className="space-y-6 animate-reveal">
-             <div className="liquid-glass glass-gradient-bg p-6 rounded-[2.5rem] shadow-sm space-y-4 border border-white/50">
-               <h3 className="font-black text-slate-800 text-xl border-b border-primary/10 pb-2">Contattaci</h3>
-               <p className="text-sm text-slate-600 leading-relaxed font-medium">Se riscontri problemi con l'App Moby Dick per le presenze, contatta il nostro team di supporto per ricevere assistenza.</p>
-               <div className="space-y-3 pt-4">
-                 <div className="flex items-center space-x-3 text-slate-700 font-black">
-                   <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary shrink-0"><span className="material-symbols-outlined">mail</span></div>
-                   <span>supporto@mobydick.it</span>
-                 </div>
-                 <div className="flex items-center space-x-3 text-slate-700 font-black pt-2">
-                   <div className="w-10 h-10 flex items-center justify-center rounded-full bg-primary/10 text-primary shrink-0"><span className="material-symbols-outlined">phone</span></div>
-                   <span>800 123 456</span>
-                 </div>
-               </div>
-             </div>
-           </div>
         );
       case 'Informazioni Legali':
         return (
