@@ -1,9 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { db } from '../utils/supabase';
 
 export default function Report() {
-  const handleExport = () => {
-    // Placeholder for actual CSV generation logic
-    alert("Funzionalità di esportazione report in arrivo!");
+  const [loading, setLoading] = useState(false);
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await db
+        .from('presenze')
+        .select(`
+          id,
+          timestamp,
+          tipo,
+          volontari (
+            nome,
+            cognome,
+            email
+          )
+        `)
+        .order('timestamp', { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        alert("Nessun dato da esportare.");
+        setLoading(false);
+        return;
+      }
+
+      const headers = "Nome,Cognome,Email,Azione,Data,Ora\n";
+      const rows = data.map(e => {
+          const date = new Date(e.timestamp);
+          const dateStr = date.toLocaleDateString('it-IT');
+          const timeStr = date.toLocaleTimeString('it-IT');
+          const vol = e.volontari || {};
+          
+          // Quotes are used to handle commas inside text fields correctly
+          const nome = `"${vol.nome || ''}"`;
+          const cognome = `"${vol.cognome || ''}"`;
+          const email = `"${vol.email || ''}"`;
+          const tipo = `"${e.tipo || ''}"`;
+          
+          return `${nome},${cognome},${email},${tipo},${dateStr},${timeStr}`;
+      }).join("\n");
+
+      // Blob ensures encoding is preserved and download works for large files
+      const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `moby_presenze_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+    } catch (err) {
+      console.error("Errore esportazione CSV:", err);
+      alert("Si è verificato un errore durante l'esportazione.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,10 +87,15 @@ export default function Report() {
         
         <button 
           onClick={handleExport}
-          className="w-full liquid-btn text-white p-4 rounded-full font-black flex items-center justify-center space-x-2 active:scale-95 transition-transform"
+          disabled={loading}
+          className={`w-full ${loading ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'liquid-btn text-white'} p-4 rounded-full font-black flex items-center justify-center space-x-2 active:scale-95 transition-all`}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
-          <span>Scarica CSV</span>
+          {loading ? (
+            <span className="material-symbols-outlined animate-spin" style={{ fontSize: 20 }}>sync</span>
+          ) : (
+            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
+          )}
+          <span>{loading ? 'Generazione in corso...' : 'Scarica CSV'}</span>
         </button>
       </div>
     </div>
