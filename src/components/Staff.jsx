@@ -78,6 +78,20 @@ export default function Staff() {
            {selectedVolunteer.email && (
              <p className="text-sm font-bold text-slate-500 mt-2 z-10">{selectedVolunteer.email}</p>
            )}
+           {(selectedVolunteer.progetto || selectedVolunteer.sede) && (
+             <div className="mt-3 flex flex-col items-center space-y-1 z-10">
+               {selectedVolunteer.progetto && (
+                 <p className="text-xs font-medium text-slate-600">
+                   <span className="font-bold text-primary">Progetto:</span> {selectedVolunteer.progetto}
+                 </p>
+               )}
+               {selectedVolunteer.sede && (
+                 <p className="text-xs font-medium text-slate-600">
+                   <span className="font-bold text-primary">Sede:</span> {selectedVolunteer.sede}
+                 </p>
+               )}
+             </div>
+           )}
            <div className="mt-4 bg-white/40 px-4 py-1.5 rounded-full border border-white/50 z-10 shadow-sm">
               <span className="text-[10px] uppercase tracking-widest font-black text-primary">Volontario Moby Dick</span>
            </div>
