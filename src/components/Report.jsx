@@ -16,7 +16,9 @@ export default function Report() {
           volontari (
             nome,
             cognome,
-            email
+            email,
+            sede,
+            progetto
           )
         `)
         .order('timestamp', { ascending: false });
@@ -29,7 +31,7 @@ export default function Report() {
         return;
       }
 
-      const headers = "Nome,Cognome,Email,Azione,Data,Ora\n";
+      const headers = "Nome,Cognome,Email,Progetto,Sede,Azione,Data,Ora\n";
       const rows = data.map(e => {
           const date = new Date(e.timestamp);
           const dateStr = date.toLocaleDateString('it-IT');
@@ -40,9 +42,11 @@ export default function Report() {
           const nome = `"${vol.nome || ''}"`;
           const cognome = `"${vol.cognome || ''}"`;
           const email = `"${vol.email || ''}"`;
+          const progetto = `"${vol.progetto || ''}"`;
+          const sede = `"${vol.sede || ''}"`;
           const tipo = `"${e.tipo || ''}"`;
           
-          return `${nome},${cognome},${email},${tipo},${dateStr},${timeStr}`;
+          return `${nome},${cognome},${email},${progetto},${sede},${tipo},${dateStr},${timeStr}`;
       }).join("\n");
 
       // Blob ensures encoding is preserved and download works for large files
