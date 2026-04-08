@@ -13,6 +13,7 @@ export default function Report() {
           id,
           timestamp,
           tipo,
+          volontario_id,
           volontari (
             nome,
             cognome,
@@ -25,7 +26,7 @@ export default function Report() {
             data_nascita
           )
         `)
-        .order('timestamp', { ascending: false });
+        .order('timestamp', { ascending: true });
 
       if (error) throw error;
 
@@ -35,12 +36,39 @@ export default function Report() {
         return;
       }
 
-      const headers = "Nome,Cognome,Email,Telefono,Codice Progetto,Titolo Progetto,Codice Sede,Codice Fiscale,Data di Nascita,Azione,Data,Ora\n";
-      const rows = data.map(e => {
-          const date = new Date(e.timestamp);
-          const dateStr = date.toLocaleDateString('it-IT');
-          const timeStr = date.toLocaleTimeString('it-IT');
-          const vol = e.volontari || {};
+      // Group presenze by volontario_id and date
+      const groupedData = {};
+
+      data.forEach(e => {
+        const date = new Date(e.timestamp);
+        const dateStr = date.toLocaleDateString('it-IT');
+        const volId = e.volontario_id;
+        const key = `${volId}_${dateStr}`;
+        const timeStr = date.toLocaleTimeString('it-IT');
+
+        if (!groupedData[key]) {
+          groupedData[key] = {
+            vol: e.volontari || {},
+            dateStr: dateStr,
+            oraEntrata: '',
+            oraUscita: ''
+          };
+        }
+
+        if (e.tipo === 'entrata') {
+          // Keep the first entry of the day
+          if (!groupedData[key].oraEntrata) {
+            groupedData[key].oraEntrata = timeStr;
+          }
+        } else if (e.tipo === 'uscita') {
+          // Keep the last exit of the day by overwriting
+          groupedData[key].oraUscita = timeStr;
+        }
+      });
+
+      const headers = "Nome,Cognome,Email,Telefono,Codice Progetto,Titolo Progetto,Codice Sede,Codice Fiscale,Data di Nascita,Data,Ora Entrata,Ora Uscita\n";
+      const rows = Object.values(groupedData).map(row => {
+          const { vol, dateStr, oraEntrata, oraUscita } = row;
           
           // Quotes are used to handle commas inside text fields correctly
           const nome = `"${vol.nome || ''}"`;
@@ -54,9 +82,8 @@ export default function Report() {
           // Formattiamo la data dal DB se esiste
           let dataNascitaVal = vol.data_nascita ? new Date(vol.data_nascita).toLocaleDateString('it-IT') : '';
           const dataNascita = `"${dataNascitaVal}"`;
-          const tipo = `"${e.tipo || ''}"`;
           
-          return `${nome},${cognome},${email},${telefono},${codiceProgetto},${titoloProgetto},${codiceSede},${codiceFiscale},${dataNascita},${tipo},${dateStr},${timeStr}`;
+          return `${nome},${cognome},${email},${telefono},${codiceProgetto},${titoloProgetto},${codiceSede},${codiceFiscale},${dataNascita},${dateStr},${oraEntrata},${oraUscita}`;
       }).join("\n");
 
       // Blob ensures encoding is preserved and download works for large files

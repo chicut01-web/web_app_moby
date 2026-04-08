@@ -58,6 +58,19 @@ fs.createReadStream(csvFilePath)
       const cognome = row['Cognome'];
       const email = row['Email'];
       const codiceFiscale = row['CodiceFiscale'];
+      const telefono = row['Telefono'];
+      const codiceProgetto = row['CodiceProgettoSelezionato'];
+      const titoloProgetto = row['TitoloProgettoSelezionato'];
+      const codiceSede = row['CodiceSedeSelezionata'];
+      
+      // Formatting data_nascita from DD/MM/YYYY to YYYY-MM-DD
+      let dataNascitaFormatted = null;
+      if (row['DataNascita']) {
+        const parts = row['DataNascita'].split('/');
+        if (parts.length === 3) {
+          dataNascitaFormatted = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+      }
 
       if (!nome || !cognome || !email) {
         console.warn(`[!] Salto riga ${index + 1}: Dati anagrafici o email mancanti.`);
@@ -71,7 +84,7 @@ fs.createReadStream(csvFilePath)
         console.log(`\n--- Volontario ${index + 1}: ${nome} ${cognome} ---`);
         console.log(`  ✉️  Email: ${email}`);
         console.log(`  🔑  Codice QR Generato: ${codice_qr}`);
-        console.log(`  💾  (Supabase) Inserirebbe: { nome: '${nome}', cognome: '${cognome}', email: '${email}', codice_qr: '${codice_qr}' }`);
+        console.log(`  💾  (Supabase) Inserirebbe: { nome: '${nome}', cognome: '${cognome}', email: '${email}', codice_qr: '${codice_qr}', telefono: '${telefono}', codice_fiscale: '${codiceFiscale}'... }`);
         console.log(`  📧  (Email) Invierebbe invito con allegato QR a ${email}.`);
       } else {
         try {
@@ -82,7 +95,13 @@ fs.createReadStream(csvFilePath)
               nome: nome,
               cognome: cognome,
               email: email,
-              codice_qr: codice_qr
+              codice_qr: codice_qr,
+              telefono: telefono,
+              codice_fiscale: codiceFiscale,
+              data_nascita: dataNascitaFormatted,
+              codice_progetto: codiceProgetto,
+              titolo_progetto: titoloProgetto,
+              codice_sede: codiceSede
             });
 
           if (dbError) throw new Error(`Db Error: ${dbError.message}`);
