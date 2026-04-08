@@ -17,8 +17,12 @@ export default function Report() {
             nome,
             cognome,
             email,
-            sede,
-            progetto
+            telefono,
+            codice_progetto,
+            titolo_progetto,
+            codice_sede,
+            codice_fiscale,
+            data_nascita
           )
         `)
         .order('timestamp', { ascending: false });
@@ -31,7 +35,7 @@ export default function Report() {
         return;
       }
 
-      const headers = "Nome,Cognome,Email,Progetto,Sede,Azione,Data,Ora\n";
+      const headers = "Nome,Cognome,Email,Telefono,Codice Progetto,Titolo Progetto,Codice Sede,Codice Fiscale,Data di Nascita,Azione,Data,Ora\n";
       const rows = data.map(e => {
           const date = new Date(e.timestamp);
           const dateStr = date.toLocaleDateString('it-IT');
@@ -42,11 +46,17 @@ export default function Report() {
           const nome = `"${vol.nome || ''}"`;
           const cognome = `"${vol.cognome || ''}"`;
           const email = `"${vol.email || ''}"`;
-          const progetto = `"${vol.progetto || ''}"`;
-          const sede = `"${vol.sede || ''}"`;
+          const telefono = `"${vol.telefono || ''}"`;
+          const codiceProgetto = `"${vol.codice_progetto || ''}"`;
+          const titoloProgetto = `"${vol.titolo_progetto || ''}"`;
+          const codiceSede = `"${vol.codice_sede || ''}"`;
+          const codiceFiscale = `"${vol.codice_fiscale || ''}"`;
+          // Formattiamo la data dal DB se esiste
+          let dataNascitaVal = vol.data_nascita ? new Date(vol.data_nascita).toLocaleDateString('it-IT') : '';
+          const dataNascita = `"${dataNascitaVal}"`;
           const tipo = `"${e.tipo || ''}"`;
           
-          return `${nome},${cognome},${email},${progetto},${sede},${tipo},${dateStr},${timeStr}`;
+          return `${nome},${cognome},${email},${telefono},${codiceProgetto},${titoloProgetto},${codiceSede},${codiceFiscale},${dataNascita},${tipo},${dateStr},${timeStr}`;
       }).join("\n");
 
       // Blob ensures encoding is preserved and download works for large files

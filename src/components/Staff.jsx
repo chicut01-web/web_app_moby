@@ -78,20 +78,27 @@ export default function Staff() {
            {selectedVolunteer.email && (
              <p className="text-sm font-bold text-slate-500 mt-2 z-10">{selectedVolunteer.email}</p>
            )}
-           {(selectedVolunteer.progetto || selectedVolunteer.sede) && (
-             <div className="mt-3 flex flex-col items-center space-y-1 z-10">
-               {selectedVolunteer.progetto && (
-                 <p className="text-xs font-medium text-slate-600">
-                   <span className="font-bold text-primary">Progetto:</span> {selectedVolunteer.progetto}
-                 </p>
-               )}
-               {selectedVolunteer.sede && (
-                 <p className="text-xs font-medium text-slate-600">
-                   <span className="font-bold text-primary">Sede:</span> {selectedVolunteer.sede}
-                 </p>
-               )}
-             </div>
-           )}
+           {/* Volunteer Extra Info */}
+           <div className="mt-4 w-full flex flex-col space-y-2 z-10 text-left bg-white/40 p-4 rounded-2xl border border-white/50 text-xs">
+              {selectedVolunteer.telefono && (
+                <p className="text-slate-600"><span className="font-bold text-primary">Telefono:</span> {selectedVolunteer.telefono}</p>
+              )}
+              {selectedVolunteer.codice_fiscale && (
+                <p className="text-slate-600 uppercase"><span className="font-bold text-primary">C.F.:</span> {selectedVolunteer.codice_fiscale}</p>
+              )}
+              {selectedVolunteer.data_nascita && (
+                <p className="text-slate-600"><span className="font-bold text-primary">Data nascita:</span> {new Date(selectedVolunteer.data_nascita).toLocaleDateString('it-IT')}</p>
+              )}
+              {selectedVolunteer.codice_progetto && (
+                <p className="text-slate-600"><span className="font-bold text-primary">Cod. Progetto:</span> {selectedVolunteer.codice_progetto}</p>
+              )}
+              {selectedVolunteer.titolo_progetto && (
+                <p className="text-slate-600"><span className="font-bold text-primary">Progetto:</span> {selectedVolunteer.titolo_progetto}</p>
+              )}
+              {selectedVolunteer.codice_sede && (
+                <p className="text-slate-600"><span className="font-bold text-primary">Cod. Sede:</span> {selectedVolunteer.codice_sede}</p>
+              )}
+           </div>
            <div className="mt-4 bg-white/40 px-4 py-1.5 rounded-full border border-white/50 z-10 shadow-sm">
               <span className="text-[10px] uppercase tracking-widest font-black text-primary">Volontario Moby Dick</span>
            </div>
